@@ -35,7 +35,6 @@ URIs are not supposed to be a bunch of folders and filenames and an API is not j
 * Separate but Connected: Consumers of hypermedia services do not have to be aware of the implementation boundaries of individual services, as the links between them provide seamless interactions across various APIs
 * Statelessness: The REST hypermedia constraint not just requires hypermedia links, but also requires interactions to be stateless. This means that all information required to process a request needs to be contained in the request itself. This constraint makes hypermedia much more robust, because it means that requests can be scattered across servers/services without the need for those requests to be associated through shared data on the server/service side. It is this additional constraint that allows hypermedia to be truly decentralized, because now there is no implicit assumption that all requests have to be processed by a single server/service that uses state information to handle the workflow across requests.
 
-
 ### Examples of non-HATEOAS non-RESTful endpoints:
 
 ```bash
@@ -97,7 +96,7 @@ data:
 * API respects the Accept Header, or else is free to choose a default content-type
 * User does not need to know about the id param
 
-## The HTTP `OPTIONS` verb:
+## The HTTP `OPTIONS` verb:
 
 Note that the URI to view a collection of a resource type, and to create a new instance of that resource are one and the same. The user needs to figure out that one is a `GET` and one a `POST`
 
