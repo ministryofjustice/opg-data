@@ -1,0 +1,22 @@
+---
+version: 2.1
+
+workflows:
+  on_build:
+    jobs:
+      - validate_documents:
+          name: build and artifact
+          filters: {branches:{ignore:[master]}}
+
+jobs:
+  validate_documents:
+    docker:
+      - image: circleci/ruby
+    steps:
+      - checkout
+      - run:
+          name: install markdownlint
+          command: gem install mdl
+      - run:
+          name: run markdownlint
+          command: mdl -r MD001 .
