@@ -33,7 +33,7 @@ paths:
           required: true
           description: Report UUID
           schema:
-            $ref: '#/components/schemas/ReportId'
+            $ref: '#/components/schemas/DocumentUuid'
       responses:
         '200':
           description: Client report
@@ -62,9 +62,7 @@ paths:
           required: true
           description: Case Reference / Casrec number
           schema:
-            type: string
-            pattern: '^([0-9]{7}T|[0-9]{8})$'
-            example: '0319392T'
+            $ref: '#/components/schemas/CaseRef'
       requestBody:
         required: true
         description: A report pdf file, and metadata
@@ -172,19 +170,32 @@ paths:
           required: true
           description: Report UUID
           schema:
-            $ref: '#/components/schemas/ReportId'
+            $ref: '#/components/schemas/DocumentUuid'
       requestBody:
         required: true
         description: The supporting document
         content:
-          image/*:
+          multipart/related:
             schema:
-              type: string
-              format: binary
-          application/*:
-            schema:
-              type: string
-              format: binary
+              type: object
+              properties:
+                supporting_document:
+                  type: object
+                  required:
+                    - data
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportSupportingDocument'
+                supporting_document_file:
+                  type: string
+                  format: base64
+            encoding:
+              supporting_document:
+                contentType: application/vnd.opg-data.v1+json
+              supporting_document_file:
+                contentType:
+                  image/*
+                  application/*
       responses:
         '201':
           description: Document created
@@ -222,16 +233,19 @@ components:
           pattern: '^reports$'
           example: reports
         id:
-          $ref: '#/components/schemas/ReportId'
+          $ref: '#/components/schemas/DocumentUuid'
         attributes:
           type: object
           required:
+            - submission_id
             - reporting_period_from
             - reporting_period_to
             - year
             - date_submitted
             - type
           properties:
+            submission_id:
+              $ref: '#/components/schemas/submissionId'
             reporting_period_from:
               type: string
               format: date
@@ -276,6 +290,7 @@ components:
       required:
         - type
         - id
+        - attributes
         - links
       properties:
         type:
@@ -283,7 +298,14 @@ components:
           pattern: '^supportingdocuments$'
           example: supportingdocuments
         id:
-          $ref: '#/components/schemas/ReportId'
+          $ref: '#/components/schemas/DocumentUuid'
+        attributes:
+          type: object
+          required:
+            - submission_id
+          properties:
+            submission_id:
+              $ref: '#/components/schemas/submissionId'
         links:
           type: object
           readOnly: true
@@ -298,13 +320,21 @@ components:
               type: string
               format: uri
               example: 'https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773'
-    ReportId:
+    CaseRef:
+      type: string
+      pattern: '^([0-9]{7}T|[0-9]{8})$'
+      example: '0319392T'
+    DocumentUuid:
       type: string
       readOnly: true
       format: uuid
       description: Document UUID
       pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
       example: '5a8b1a26-8296-4373-ae61-f8d0b250e773'
+    submissionId:
+      type: integer
+      format: int32
+      example: 12345
     Error400:
       type: object
       required:
