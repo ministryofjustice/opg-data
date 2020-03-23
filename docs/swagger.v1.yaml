@@ -156,7 +156,7 @@ paths:
             application/vnd.opg-data.v1+json:
               schema: 
                 $ref: '#/components/schemas/Error503'
-  '/reports/{id}/supportingdocuments':
+  '/clients/{caseref}/reports/{id}/supportingdocuments':
     description: Supporting documents associated with client reports
     post:
       summary: Add a document to Supervision which supports a report
@@ -165,6 +165,12 @@ paths:
       tags:
         - 'deputy-reporting'
       parameters:
+        - in: path
+          name: caseref
+          required: true
+          description: Case Reference / Casrec number
+          schema:
+            $ref: '#/components/schemas/CaseRef'
         - in: path
           name: id
           required: true
