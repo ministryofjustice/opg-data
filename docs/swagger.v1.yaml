@@ -426,7 +426,7 @@ components:
       type: object
       required:
         - type
-        - report_id
+        - id
         - attributes
         - links
       properties:
