@@ -10,8 +10,6 @@ info:
     # email: "support@example.com"
 
 servers:
-  - url: https://virtserver.swaggerhub.com/leapday/opg-data/1.0.0
-    description: SwaggerHub API Auto Mocking.
   - url: /1.0
     description: localmock
 tags:
