@@ -18,6 +18,10 @@ tags:
     externalDocs:
       url: https://github.com/ministryofjustice/opg-data-deputy-reporting
 
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestParameters: true
+    validateRequestBody: true
 paths:
   /healthcheck:
     description: Sirius healthcheck
@@ -29,8 +33,9 @@ paths:
         - "deputy-reporting"
       security:
         - sigv4: []
+      x-amazon-apigateway-request-validator: "all"
       x-amazon-apigateway-integration:
-        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_healthcheck_arn}/invocations
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.healthcheck_function_name}/invocations
         responses:
           default:
             statusCode: "200"
@@ -105,8 +110,9 @@ paths:
             $ref: '#/components/schemas/DocumentUuid'
       security:
         - sigv4: []
+      x-amazon-apigateway-request-validator: "all"
       x-amazon-apigateway-integration:
-        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_reports_arn}/invocations
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.reports_function_name}/invocations
         responses:
           default:
             statusCode: "200"
@@ -181,8 +187,9 @@ paths:
             $ref: '#/components/schemas/CaseRef'
       security:
         - sigv4: []
+      x-amazon-apigateway-request-validator: "all"
       x-amazon-apigateway-integration:
-        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_reports_arn}/invocations
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.reports_function_name}/invocations
         responses:
           default:
             statusCode: "200"
@@ -283,7 +290,7 @@ paths:
             application/vnd.opg-data.v1+json:
               schema:
                 $ref: '#/components/schemas/Error503'
-  '/clients/{caseref}/reports/{id}/supportingdocuments':
+  /clients/{caseref}/reports/{id}/supportingdocuments:
     description: Supporting documents associated with client reports
     post:
       summary: Add a document to Supervision which supports a report
@@ -306,8 +313,9 @@ paths:
             $ref: '#/components/schemas/DocumentUuid'
       security:
         - sigv4: []
+      x-amazon-apigateway-request-validator: "all"
       x-amazon-apigateway-integration:
-        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_reports_arn}/invocations
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.reports_function_name}/invocations
         responses:
           default:
             statusCode: "200"
