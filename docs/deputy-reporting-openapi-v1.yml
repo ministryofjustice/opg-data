@@ -88,9 +88,6 @@ x-amazon-apigateway-gateway-responses:
       responseTemplates:
         application/json: '{ "id": $context.requestId, "code": "OPGDATA-API-WAF_FILTERED", "title":$context.error.messageString}'
 
-
-
-
 paths:
   /healthcheck:
     description: Sirius healthcheck
@@ -122,83 +119,6 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Healthcheck'
-                  links:
-                    type: object
-                  meta:
-                    type: object
-        400:
-          description: Generic bad request (generally invalid syntax)
-          content:
-            application/vnd.opg-data.v1+json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        401:
-          description: Unauthorised (no current user and there should be)
-          content:
-            application/vnd.opg-data.v1+json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        403:
-          description: Forbidden - The current user is forbidden from accessing this data (in this way)
-          content:
-            application/vnd.opg-data.v1+json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        404:
-          description: That URL is not a valid route, or the item resource does not exist
-          content:
-            application/vnd.opg-data.v1+json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        500:
-          description: Something unexpected happened and it is the API"s fault
-          content:
-            application/vnd.opg-data.v1+json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-        503:
-          description: Service Unavailable - please try again later
-          content:
-            application/vnd.opg-data.v1+json:
-              schema:
-                $ref: '#/components/schemas/Error503'
-  /reports/{id}:
-    description: Client report
-    get:
-      summary: Client report
-      description: Client report
-      operationId: app.showReportDocument
-      tags:
-        - "deputy-reporting"
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: Report UUID
-          schema:
-            $ref: '#/components/schemas/DocumentUuid'
-      security:
-        - sigv4: []
-      x-amazon-apigateway-request-validator: "all"
-      x-amazon-apigateway-integration:
-        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.reports_function_name}/invocations
-        responses:
-          default:
-            statusCode: "200"
-        passthroughBehavior: "when_no_match"
-        httpMethod: "POST"
-        contentHandling: "CONVERT_TO_TEXT"
-        type: "aws_proxy"
-      responses:
-        200:
-          description: Client report
-          content:
-            application/vnd.opg-data.v1+json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Report'
                   links:
                     type: object
                   meta:
