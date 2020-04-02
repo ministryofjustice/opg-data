@@ -535,6 +535,7 @@ components:
           example: application/pdf
         source:
           type: string
+          format: byte
           description: The base64 encoded file
     Error400:
       type: object
