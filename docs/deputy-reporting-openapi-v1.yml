@@ -190,7 +190,7 @@ paths:
         required: true
         description: A report pdf file, and metadata
         content:
-          multipart/related:
+          application/json:
             schema:
               type: object
               properties:
@@ -201,14 +201,6 @@ paths:
                   properties:
                     data:
                       $ref: '#/components/schemas/Report'
-                report_file:
-                  type: string
-                  format: base64
-            encoding:
-              report:
-                contentType: application/vnd.opg-data.v1+json
-              report_file:
-                contentType: application/pdf
       responses:
         201:
           description: Document created
@@ -316,7 +308,7 @@ paths:
         required: true
         description: The supporting document
         content:
-          multipart/related:
+          application/json:
             schema:
               type: object
               properties:
@@ -327,16 +319,6 @@ paths:
                   properties:
                     data:
                       $ref: '#/components/schemas/ReportSupportingDocument'
-                supporting_document_file:
-                  type: string
-                  format: base64
-            encoding:
-              supporting_document:
-                contentType: application/vnd.opg-data.v1+json
-              supporting_document_file:
-                contentType:
-                  image/*
-                  application/*
       responses:
         201:
           description: Document created
@@ -423,6 +405,7 @@ components:
         - type
         - id
         - attributes
+        - file
         - links
       properties:
         type:
@@ -468,6 +451,8 @@ components:
                 - "HW"
                 - "NDR"
               example: "PF"
+        file:
+          $ref: '#/components/schemas/file'
         links:
           type: object
           readOnly: true
@@ -488,6 +473,7 @@ components:
         - type
         - id
         - attributes
+        - file
         - links
       properties:
         type:
@@ -503,6 +489,8 @@ components:
           properties:
             submission_id:
               $ref: '#/components/schemas/submissionId'
+        file:
+          $ref: '#/components/schemas/file'
         links:
           type: object
           readOnly: true
@@ -532,6 +520,22 @@ components:
       type: integer
       format: int32
       example: 12345
+    file:
+      type: object
+      required:
+        - name
+        - mimetype
+        - source
+      properties:
+        name:
+          type: string
+          example: Report_1234567T_2018_2019_11111.pdf
+        mimetype:
+          type: string
+          example: application/pdf
+        source:
+          type: string
+          description: The base64 encoded file
     Error400:
       type: object
       required:
