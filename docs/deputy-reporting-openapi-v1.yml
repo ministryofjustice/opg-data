@@ -18,7 +18,6 @@ tags:
     externalDocs:
       url: https://github.com/ministryofjustice/opg-data-deputy-reporting
 
-x-amazon-apigateway-binary-media-types: ["multipart/related"]
 x-amazon-apigateway-request-validators:
   all:
     validateRequestParameters: true
@@ -296,7 +295,7 @@ paths:
         - sigv4: []
       x-amazon-apigateway-request-validator: "all"
       x-amazon-apigateway-integration:
-        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.reports_function_name}/invocations
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.supporting_docs_name}/invocations
         responses:
           default:
             statusCode: "200"
@@ -403,10 +402,8 @@ components:
       type: object
       required:
         - type
-        - id
         - attributes
         - file
-        - links
       properties:
         type:
           type: string
@@ -471,10 +468,8 @@ components:
       type: object
       required:
         - type
-        - id
         - attributes
         - file
-        - links
       properties:
         type:
           type: string
