@@ -18,7 +18,7 @@ Our pact workflow is described in the diagram below (this is the deputy-reportin
 
 Which amounts to the following steps on both sides of the interaction.
 
-1. Consumer system team creates a Pact contract required for its interaction with the Provider. 
+1. Consumer system team creates a Pact contract required for its interaction with the Provider.
 
 2. Consumer team creates a branch to build their new contract and pushes it to Github.
 
