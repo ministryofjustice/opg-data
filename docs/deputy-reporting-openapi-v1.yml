@@ -10,7 +10,7 @@ info:
     # email: "support@example.com"
 
 servers:
-  - url: /1.0
+  - url: /v1
     description: localmock
 tags:
   - name: deputy-reporting
@@ -395,6 +395,7 @@ components:
       name: Authorization
       in: header
       x-amazon-apigateway-authtype: awsSigv4
+      x-apikeyInfoFunc: app.apikey_auth
   schemas:
     Healthcheck:
       type: object
