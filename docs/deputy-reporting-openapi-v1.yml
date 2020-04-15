@@ -118,8 +118,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Healthcheck'
-                  links:
-                    type: object
+#                  links:
+#                    type: object
                   meta:
                     type: object
         400:
@@ -209,17 +209,16 @@ paths:
                 type: object
                 required:
                   - data
-                  - links
                 properties:
                   data:
-                    $ref: '#/components/schemas/Report'
-                  links:
-                    type: object
-                    properties:
-                      api-docs:
-                        type: string
-                        format: uri
-                        example: "https://opg-data-api.service.gov.uk/developer/"
+                    $ref: '#/components/schemas/Response201'
+#                  links:
+#                    type: object
+#                    properties:
+#                      api-docs:
+#                        type: string
+#                        format: uri
+#                        example: "https://opg-data-api.service.gov.uk/developer/"
                   meta:
                     type: object
         400:
@@ -327,17 +326,17 @@ paths:
                 type: object
                 required:
                   - data
-                  - links
+#                  - links
                 properties:
                   data:
-                    $ref: '#/components/schemas/ReportSupportingDocument'
-                  links:
-                    type: object
-                    properties:
-                      api-docs:
-                        type: string
-                        format: uri
-                        example: "https://opg-data-api.service.gov.uk/developer/"
+                    $ref: '#/components/schemas/Response201'
+#                  links:
+#                    type: object
+#                    properties:
+#                      api-docs:
+#                        type: string
+#                        format: uri
+#                        example: "https://opg-data-api.service.gov.uk/developer/"
                   meta:
                     type: object
         400:
@@ -451,20 +450,20 @@ components:
               example: "PF"
         file:
           $ref: '#/components/schemas/file'
-        links:
-          type: object
-          readOnly: true
-          required:
-            - self
-          properties:
-            self:
-              type: string
-              format: uri
-              example: "https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773"
-            client:
-              type: string
-              format: uri
-              example: "https://opg-data-api.service.gov.uk/clients/0319392T"
+#        links:
+#          type: object
+#          readOnly: true
+#          required:
+#            - self
+#          properties:
+#            self:
+#              type: string
+#              format: uri
+#              example: "https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773"
+#            client:
+#              type: string
+#              format: uri
+#              example: "https://opg-data-api.service.gov.uk/clients/0319392T"
     ReportSupportingDocument:
       type: object
       required:
@@ -487,20 +486,20 @@ components:
               $ref: '#/components/schemas/submissionId'
         file:
           $ref: '#/components/schemas/file'
-        links:
-          type: object
-          readOnly: true
-          required:
-            - self
-          properties:
-            self:
-              type: string
-              format: uri
-              example: 'https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773/supportingdocuments/5a8b1a26-8296-4373-ae61-f8d0b250e774'
-            report:
-              type: string
-              format: uri
-              example: 'https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773'
+#        links:
+#          type: object
+#          readOnly: true
+#          required:
+#            - self
+#          properties:
+#            self:
+#              type: string
+#              format: uri
+#              example: 'https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773/supportingdocuments/5a8b1a26-8296-4373-ae61-f8d0b250e774'
+#            report:
+#              type: string
+#              format: uri
+#              example: 'https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773'
     CaseRef:
       type: string
       pattern: '^([0-9]{7}T|[0-9]{8})$'
@@ -533,6 +532,41 @@ components:
           type: string
           format: byte
           description: The base64 encoded file
+    Response201:
+      type: object
+      required:
+        - type
+        - id
+        - attributes
+#        - links
+      properties:
+        type:
+          type: string
+          pattern: "^reports$"
+          example: reports
+        id:
+          $ref: '#/components/schemas/DocumentUuid'
+        attributes:
+          type: object
+          required:
+            - submission_id
+          properties:
+            submission_id:
+              $ref: '#/components/schemas/submissionId'
+#        links:
+#          type: object
+#          readOnly: true
+#          required:
+#            - self
+#          properties:
+#            self:
+#              type: string
+#              format: uri
+#              example: "https://opg-data-api.service.gov.uk/reports/5a8b1a26-8296-4373-ae61-f8d0b250e773"
+#            client:
+#              type: string
+#              format: uri
+#              example: "https://opg-data-api.service.gov.uk/clients/1234567T"
     Error400:
       type: object
       required:
@@ -558,13 +592,13 @@ components:
               detail:
                 type: string
                 example: "Invalid request, the data is incorrect"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/invalidrequest"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/invalidrequest"
               source:
                 type: object
                 properties:
@@ -599,13 +633,13 @@ components:
               detail:
                 type: string
                 example: "Unauthorised (no current user and there should be)"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/unauthorised"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/unauthorised"
               source:
                 type: object
                 properties:
@@ -640,13 +674,13 @@ components:
               detail:
                 type: string
                 example: "Forbidden - The current user is forbidden from accessing this data (in this way)"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/forbidden"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/forbidden"
               source:
                 type: object
                 properties:
@@ -681,13 +715,13 @@ components:
               detail:
                 type: string
                 example: "That URL is not a valid route, or the item resource does not exist"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/notfound"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/notfound"
               source:
                 type: object
                 properties:
@@ -722,13 +756,13 @@ components:
               detail:
                 type: string
                 example: "Payload too large, try and upload in smaller chunks"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/filesizelimit"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/filesizelimit"
               source:
                 type: object
                 properties:
@@ -763,13 +797,13 @@ components:
               detail:
                 type: string
                 example: "Unsupported media type for this endpoint"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/unsupportedtype"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/unsupportedtype"
               source:
                 type: object
                 properties:
@@ -804,13 +838,13 @@ components:
               detail:
                 type: string
                 example: "Something unexpected happened internally"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/servererror"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/servererror"
               source:
                 type: object
                 properties:
@@ -845,13 +879,13 @@ components:
               detail:
                 type: string
                 example: "Service is currently unavailable. Please try again later"
-              links:
-                type: object
-                properties:
-                  about:
-                    type: string
-                    format: uri
-                    example: "https://opg-data-api.service.gov.uk/help/errors/unavailable"
+#              links:
+#                type: object
+#                properties:
+#                  about:
+#                    type: string
+#                    format: uri
+#                    example: "https://opg-data-api.service.gov.uk/help/errors/unavailable"
               source:
                 type: object
                 properties:
