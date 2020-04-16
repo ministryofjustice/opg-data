@@ -494,7 +494,7 @@ components:
       properties:
         type:
           type: string
-          pattern: "^reports$"
+          pattern: "^reports|supportingdocuments$"
           example: reports
         id:
           $ref: '#/components/schemas/DocumentUuid'
