@@ -17,6 +17,7 @@
 	<link href="https://jamesrwarren.github.io/test_documentation/theme/pygments.css" rel="stylesheet">
 
 	<!-- Feeds -->
+	<link href="https://jamesrwarren.github.io/test_documentation/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="OPG Data Atom Feed" />
 
 
 
@@ -64,34 +65,31 @@
 		<div class="page-header"><h1>How To Publish</h1></div>
 		<div><p>To publish to this site you should pull the <code>content</code> branch. </p>
 <p>If not already installed then install pelican <code>pip install pelican</code></p>
-<p>Create a new branch for your changes and make sure it's up to date:</p>
-<div class="highlight"><pre><span></span><code><span class="err">git checkout -b mynewbranch &amp;&amp; git pull origin master</span>
-</code></pre></div>
-
-
 <p>Now checkout the remote branch <code>content</code>. This branch should <strong>not</strong> get merged to master:</p>
-<div class="highlight"><pre><span></span><code><span class="err">git checkout content</span>
+<div class="highlight"><pre><span></span><code>git checkout content
+<span class="nb">cd</span> docs/pelican
 </code></pre></div>
 
 
 <p>Check you're in the content branch. You should see a folder called content. 
-Go in and make whatever changes are needed by adding .md files or modifying existing ones. </p>
+Go in and make whatever changes are needed by adding <code>.md</code> files or modifying existing ones. </p>
 <p>Push your changes to the content branch so they're captured:</p>
-<div class="highlight"><pre><span></span><code><span class="err">git add .</span>
-<span class="err">git commit -m &quot;update static website content&quot;</span>
-<span class="err">git push origin content</span>
+<div class="highlight"><pre><span></span><code>git add .
+git commit -m <span class="s2">&quot;update static website content&quot;</span>
+git push origin content
 </code></pre></div>
 
 
 <p>Now you can build the website locally with your content changes, 
 publish it and push to your branch</p>
-<div class="highlight"><pre><span></span><code><span class="n">pelican</span> <span class="n">content</span> <span class="o">-</span><span class="n">o</span> <span class="n">output</span> <span class="o">-</span><span class="n">s</span> <span class="n">publishconf</span><span class="o">.</span><span class="n">py</span> 
-<span class="n">ghp</span><span class="o">-</span><span class="kn">import</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;Generate Pelican site&quot;</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">jekyll</span> <span class="o">-</span><span class="n">b</span> <span class="n">master</span> <span class="n">output</span>
-<span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">mynewbranch</span>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> docs/pelican
+pelican content -o output -s publishconf.py 
+ghp-import -m <span class="s2">&quot;Generate Pelican site&quot;</span> --no-jekyll -b gh-pages output
+git push origin gh-pages
 </code></pre></div>
 
 
-<p>Now raise a PR in the normal way and it can be merged.</p></div>
+<p>Your changes are now published.</p></div>
 	</div>
 		<footer>
 		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>

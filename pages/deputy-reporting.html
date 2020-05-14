@@ -17,6 +17,7 @@
 	<link href="https://jamesrwarren.github.io/test_documentation/theme/pygments.css" rel="stylesheet">
 
 	<!-- Feeds -->
+	<link href="https://jamesrwarren.github.io/test_documentation/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="OPG Data Atom Feed" />
 
 
 
@@ -62,12 +63,63 @@
 	  <div class="content">
 	<div class='page'>
 		<div class="page-header"><h1>Deputy Reporting</h1></div>
-		<div><h3>Deputy Reporting</h3>
-<p>The deputy reporting integration is the first that the 'integrations team' created.</p>
-<p>It is a service that </p>
-<h4>Purpose</h4>
-<h4>Repositories</h4>
-<h4></h4></div>
+		<div><h4>Purpose</h4>
+<p>The Deputy Reporting  is an endpoint used by Sirius and Use an LPA application to 
+generate, validate and revoke codes so that actors, 
+such as individuals with legal power of attorney over a donor, 
+can validate their identity and gain access to view a donors details.</p>
+<p>This is accomplished by Sirius sending out letters with unique codes to actors who can then 
+try and validate the code through the use an LPA website.</p>
+<h4>Consumers of this API</h4>
+<ul>
+<li>Sirius - <a href="https://github.com/ministryofjustice/opg-sirius">opg-sirius</a></li>
+<li>Use an LPA - <a href="https://github.com/ministryofjustice/opg-use-an-lpa">opg-use-an-lpa</a></li>
+</ul>
+<h4>Integration Repositories</h4>
+<ul>
+<li>LPA Codes - <a href="https://github.com/ministryofjustice/opg-data-lpa-codes">opg-data-lpa-codes</a></li>
+</ul>
+<h4>Integration Location</h4>
+<ul>
+<li>Sirius Account (development, preproduction, production)</li>
+<li>EU West 1</li>
+</ul>
+<h4>Security</h4>
+<p>URLs to the endpoints are publicly accessible but locked down by AWS Authentication to only 
+be accessible from the task ECS role of the API service for both Sirius and Use an LPA. </p>
+<h4>Setup Local Environment</h4>
+<p>From the root of the repository you can type <code>docker-compose up -d</code>. This will bring up two services, 
+a connexion service (that mocks aws gateway validation and routes requests) and a dynamodb local service 
+which acts as the data store.</p>
+<h4>Setup Branch Environment</h4>
+<p>Branch environments are set up through the CI pipeline. However if you wish to build one manually 
+for whatever reason then you can run the following (replacing <myworkspace> with whatever you want 
+your workspace to be called):</p>
+<div class="highlight"><pre><span></span><code><span class="err">cd terraform/environment</span>
+<span class="err">export TF_WORKSPACE=&lt;myworkspace&gt;</span>
+<span class="err">aws-vault exec identity -- terraform init</span>
+<span class="err">aws-vault exec identity -- terraform plan</span>
+<span class="err">aws-vault exec identity -- terraform apply  </span>
+</code></pre></div>
+
+
+<p>More information on working with workspaces can be found in the technologies used tab.</p>
+<h4>ADRs</h4>
+<p>Can be found <a href="https://github.com/ministryofjustice/opg-data-lpa-codes/tree/master/docs/architecture/decisions">here</a> 
+and <a href="https://github.com/ministryofjustice/opg-data/tree/master/docs/architecture">here</a>.</p>
+<h4>Testing</h4>
+<p>Testing is accomplished by using a combination of unit tests and contract testing (using pact).</p>
+<p>Unit tests can be run locally by running the following from the root directory of the repo:</p>
+<div class="highlight"><pre><span></span><code><span class="err">virtualenv venv</span>
+<span class="err">source venv/bin/activate</span>
+<span class="err">pip install -r ./lambda_functions/v1/requirements/dev-requirements.txt</span>
+<span class="err">python -m pytest</span>
+</code></pre></div>
+
+
+<p>Pact tests can only be run against pact broker currently. Local verification.</p>
+<h4>Design Documents</h4>
+<p><a href="https://docs.google.com/drawings/d/1ghTX_lBpWcjYViPCzbbXQ0MRa2bcg2o0xf25GLSbAgI/edit">work in progress</a></p></div>
 	</div>
 		<footer>
 		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
