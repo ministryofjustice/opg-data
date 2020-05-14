@@ -63,7 +63,10 @@
 	  <div class="content">
 	<div class='page'>
 		<div class="page-header"><h1>AWS Lambda</h1></div>
-		<div></div>
+		<div><p>So far all our integrations use API gateway for the Rest APIs that integrate with Lambdas. 
+These all run python code (further information on libraries of interest in python section).</p>
+<p>The lambdas are deployed and managed by terraform and use layers for their dependencies which 
+are populated with the requirements at run time of the CircleCI job. </p></div>
 	</div>
 		<footer>
 		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>

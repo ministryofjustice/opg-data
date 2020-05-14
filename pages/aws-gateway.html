@@ -63,7 +63,22 @@
 	  <div class="content">
 	<div class='page'>
 		<div class="page-header"><h1>AWS Gateway</h1></div>
-		<div></div>
+		<div><p>The pattern that we follow for the deployment of our Rest APIs is to manage them via terraform 
+and to use an OpenAPI spec to generate them that handles the security and validation.</p>
+<p>We use versions via stages and pass stage variables to the endpoints that point to different 
+lambda deployments. Note, these are completely separate Lambda deployments and not versioned 
+Lambdas (which is also possible but restricted our ability to fix up older versions).</p>
+<p>Paths are product and environment specific and use delegated domains to create a hierarchy
+to support this implementation.</p>
+<p>The Rest APIs will be be accessible externally in production from
+<product-name>.api.opg.service.justice.gov.uk which is a
+sub domain of api.opg.service.justice.gov.uk and this zone is created in the
+management account.</p>
+<p>We use further subdomains for deployment to preproduction (pre) and development (dev) and
+further subdomains of development for branch based deployment. For example, a uri to a
+healthcheck endpoint created on PR1234 would like
+PR1234.dev.api.<product-name>.api.opg.service.justice.gov.uk/v1/healthcheck.</p>
+<p>New certs aren't created per branch as the sub branches use the wildcard cert for dev sub domain.</p></div>
 	</div>
 		<footer>
 		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
