@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>OPG Data</title>
+	<meta name="description" content="">
+	<meta name="author" content="Ministry of Justice">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="https://ministryofjustice.github.io/opg-data/theme/html5.js"></script>
+	<![endif]-->
+
+	<!-- Styles -->
+	<link href="https://ministryofjustice.github.io/opg-data/theme/bootstrap.min.css" rel="stylesheet">
+	<link href="https://ministryofjustice.github.io/opg-data/theme/local.css" rel="stylesheet">
+	<link href="https://ministryofjustice.github.io/opg-data/theme/pygments.css" rel="stylesheet">
+
+	<!-- Feeds -->
+	<link href="https://ministryofjustice.github.io/opg-data/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="OPG Data Atom Feed" />
+
+
+
+
+</head>
+<body>
+	<div class="topbar">
+	  <div class="topbar-inner">
+		<div class="container-fluid">
+		  <a class="brand" href="https://ministryofjustice.github.io/opg-data/">OPG Data</a>
+			<ul class="nav">
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/how-to-publish.html">How To Publish</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/list-of-integrations.html">List of Integrations</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/technologies-used.html">Technologies used</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/the-team.html">The Team</a></li>
+					<li ><a href="https://ministryofjustice.github.io/opg-data/category/misc.html">misc</a></li>
+			</ul>
+			<p class="pull-right"><a href="https://ministryofjustice.github.io/opg-data/archives.html">[archives]</a> <a href="https://ministryofjustice.github.io/opg-data/tags.html">[tags]</a></p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="container-fluid">
+	  <div class="sidebar">
+		<div class="well">
+			<h3>Blogroll</h3>
+			<ul>
+				<li><a href="https://github.com/ministryofjustice/opg-data">OPG Data</a></li>
+				<li><a href="https://github.com/ministryofjustice/opg-data-deputy-reporting">OPG Data Deputy Reporting</a></li>
+				<li><a href="https://github.com/ministryofjustice/opg-data-lpa-codes">OPG Data LPA Codes</a></li>
+				<li><a href="http://getpelican.com/">Pelican</a></li>
+				<li><a href="http://python.org/">Python.org</a></li>
+				<li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+			</ul>
+			<div class="social">
+			<h3>Social</h3>
+			<ul>
+				<li><a href="https://www.publicguardian-scotland.gov.uk/general/contact-us">OPG Contact Us</a></li>
+			</ul>
+			</div>
+		</div>
+	  </div>
+	  <div class="content">
+	<div class='page'>
+		<div class="page-header"><h1>AWS Gateway</h1></div>
+		<div><p>The pattern that we follow for the deployment of our Rest APIs is to manage them via terraform 
+and to use an OpenAPI spec to generate them that handles the security and validation.</p>
+<p>We use versions via stages and pass stage variables to the endpoints that point to different 
+lambda deployments. Note, these are completely separate Lambda deployments and not versioned 
+Lambdas (which is also possible but restricted our ability to fix up older versions).</p>
+<p>Paths are product and environment specific and use delegated domains to create a hierarchy
+to support this implementation.</p>
+<p>The Rest APIs will be be accessible externally in production from
+<product-name>.api.opg.service.justice.gov.uk which is a
+sub domain of api.opg.service.justice.gov.uk and this zone is created in the
+management account.</p>
+<p>We use further subdomains for deployment to preproduction (pre) and development (dev) and
+further subdomains of development for branch based deployment. For example, a uri to a
+healthcheck endpoint created on PR1234 would like
+PR1234.dev.api.<product-name>.api.opg.service.justice.gov.uk/v1/healthcheck.</p>
+<p>New certs aren't created per branch as the sub branches use the wildcard cert for dev sub domain.</p></div>
+	</div>
+		<footer>
+		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
+		  <p>&copy; Ministry of Justice</p>
+		</footer>
+	  </div>
+
+	</div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>OPG Data</title>
+	<meta name="description" content="">
+	<meta name="author" content="Ministry of Justice">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="https://ministryofjustice.github.io/opg-data/theme/html5.js"></script>
+	<![endif]-->
+
+	<!-- Styles -->
+	<link href="https://ministryofjustice.github.io/opg-data/theme/bootstrap.min.css" rel="stylesheet">
+	<link href="https://ministryofjustice.github.io/opg-data/theme/local.css" rel="stylesheet">
+	<link href="https://ministryofjustice.github.io/opg-data/theme/pygments.css" rel="stylesheet">
+
+	<!-- Feeds -->
+	<link href="https://ministryofjustice.github.io/opg-data/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="OPG Data Atom Feed" />
+
+
+
+
+</head>
+<body>
+	<div class="topbar">
+	  <div class="topbar-inner">
+		<div class="container-fluid">
+		  <a class="brand" href="https://ministryofjustice.github.io/opg-data/">OPG Data</a>
+			<ul class="nav">
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/how-to-publish.html">How To Publish</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/list-of-integrations.html">List of Integrations</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/technologies-used.html">Technologies used</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/the-team.html">The Team</a></li>
+					<li ><a href="https://ministryofjustice.github.io/opg-data/category/misc.html">misc</a></li>
+			</ul>
+			<p class="pull-right"><a href="https://ministryofjustice.github.io/opg-data/archives.html">[archives]</a> <a href="https://ministryofjustice.github.io/opg-data/tags.html">[tags]</a></p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="container-fluid">
+	  <div class="sidebar">
+		<div class="well">
+			<h3>Blogroll</h3>
+			<ul>
+				<li><a href="https://github.com/ministryofjustice/opg-data">OPG Data</a></li>
+				<li><a href="https://github.com/ministryofjustice/opg-data-deputy-reporting">OPG Data Deputy Reporting</a></li>
+				<li><a href="https://github.com/ministryofjustice/opg-data-lpa-codes">OPG Data LPA Codes</a></li>
+				<li><a href="http://getpelican.com/">Pelican</a></li>
+				<li><a href="http://python.org/">Python.org</a></li>
+				<li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+			</ul>
+			<div class="social">
+			<h3>Social</h3>
+			<ul>
+				<li><a href="https://www.publicguardian-scotland.gov.uk/general/contact-us">OPG Contact Us</a></li>
+			</ul>
+			</div>
+		</div>
+	  </div>
+	  <div class="content">
+	<div class='page'>
+		<div class="page-header"><h1>Terraform</h1></div>
+		<div><h4>Workspace based environments</h4>
+<p>We use workspaces. Workspaces allow you modify a terraform state file through applying
+and destroying configuration independently of other workspaces. For example if I was in workspace 'X'
+and locked the state file by killing off an apply half way through then although no one could work on
+workspace 'X', workspace 'Y' would be completely unaffected.</p>
+<p>We use this principal so that in our dev environments we create workspaces based on our branch name.
+As such we can have multiple copies of an environment in the same AWS account.</p>
+<p>The workspaces are controlled by the variable TF_WORKSPACE. If you wish manually run a plan or apply against
+one of your branch workspaces for development purposes then you must be in the
+<code>terraform/environment</code> folder.
+You would then run the following replacing myworkspace with your workspace name:
+<code>export TF_WORKSPACE=myworkspace</code>.
+Next run your terraform command (aws vault profile could be different depending how you set it up):
+<code>aws-vault exec identity -- terraform plan</code>.</p>
+<p>The <code>terraform/account</code> folder is run once per account rather than being branch based.</p>
+<h4>OpenApi orientated rest API (and tests)</h4>
+<p>The API gateway is generated from the OpenApi spec. 
+The OpenApi spec controls the auth method, validation and the versioning 
+by means of using stage variables to point to separate lambdas.</p>
+<h4>API Gateway deployment</h4>
+<p>The way the amazon API Gateway product works is that we have a rest api that has integrations to end points.
+In our case these are lambdas. To access the gateway a stage needs to be deployed and a DNS entry can then
+point to a particular stage.</p>
+<p>Our deployments in this lambda are controlled by one of 3 variables being updated.</p>
+<p>1) stage_version: If there's a new API version released
+2) content_api_sha: If the content of the openapi spec changes
+3) lambda_version_folder_sha: If the pre-generated sha of the lambda folder changes (e.g there's been a change in the lambda code).</p>
+<p>If any of these change it triggers a 'deployment'.</p>
+<h4>Release a new version</h4>
+<p>Stages point to the relevant version of the lambda for the stage using stage variables. These are defined in
+the OpenApi spec and assigned by the terraform code.</p>
+<p>The process for releasing a new version is:</p>
+<p>1) Make sure there's a new OpenApi spec with a different version number.
+We should have as many OpenApi specs as we want to support. If we still want to keep them
+afterwards but have retired the version from terraform then they should be moved to an
+archive folder.
+2) Copy previous v<em> folder in lambda_functions and increment by one. Make all necessary lambda
+changes to work with the new specification.
+3) In lambda.tf in <code>terraform/environment</code>, copy the lambda code for previous version and
+add new modules with appropriate variables passed in.
+4) In locals.tf update the <code>latest_openapi_version</code> variable.
+5) In <code>stage.tf</code> copy and paste the module deploy_v</em> and add new module for this version.</p>
+<p>This will allow us to connect to two separate end points based on stage version.</p>
+<p>It is not practical using this method, to support long term, multiple versions as deployments are per
+Rest API. As such the deployment and old stage crystallised in time and cannot be modified once new version is released.
+The lambdas are completely separate so a bug fix on the lambda side could be done on a previous version.</p></div>
+	</div>
+		<footer>
+		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
+		  <p>&copy; Ministry of Justice</p>
+		</footer>
+	  </div>
+
+	</div>
+</body>
+</html>

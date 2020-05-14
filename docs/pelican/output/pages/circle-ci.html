@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>OPG Data</title>
+	<meta name="description" content="">
+	<meta name="author" content="Ministry of Justice">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="https://ministryofjustice.github.io/opg-data/theme/html5.js"></script>
+	<![endif]-->
+
+	<!-- Styles -->
+	<link href="https://ministryofjustice.github.io/opg-data/theme/bootstrap.min.css" rel="stylesheet">
+	<link href="https://ministryofjustice.github.io/opg-data/theme/local.css" rel="stylesheet">
+	<link href="https://ministryofjustice.github.io/opg-data/theme/pygments.css" rel="stylesheet">
+
+	<!-- Feeds -->
+	<link href="https://ministryofjustice.github.io/opg-data/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="OPG Data Atom Feed" />
+
+
+
+
+</head>
+<body>
+	<div class="topbar">
+	  <div class="topbar-inner">
+		<div class="container-fluid">
+		  <a class="brand" href="https://ministryofjustice.github.io/opg-data/">OPG Data</a>
+			<ul class="nav">
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/how-to-publish.html">How To Publish</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/list-of-integrations.html">List of Integrations</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/technologies-used.html">Technologies used</a></li>
+						<li><a href="https://ministryofjustice.github.io/opg-data/pages/the-team.html">The Team</a></li>
+					<li ><a href="https://ministryofjustice.github.io/opg-data/category/misc.html">misc</a></li>
+			</ul>
+			<p class="pull-right"><a href="https://ministryofjustice.github.io/opg-data/archives.html">[archives]</a> <a href="https://ministryofjustice.github.io/opg-data/tags.html">[tags]</a></p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="container-fluid">
+	  <div class="sidebar">
+		<div class="well">
+			<h3>Blogroll</h3>
+			<ul>
+				<li><a href="https://github.com/ministryofjustice/opg-data">OPG Data</a></li>
+				<li><a href="https://github.com/ministryofjustice/opg-data-deputy-reporting">OPG Data Deputy Reporting</a></li>
+				<li><a href="https://github.com/ministryofjustice/opg-data-lpa-codes">OPG Data LPA Codes</a></li>
+				<li><a href="http://getpelican.com/">Pelican</a></li>
+				<li><a href="http://python.org/">Python.org</a></li>
+				<li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+			</ul>
+			<div class="social">
+			<h3>Social</h3>
+			<ul>
+				<li><a href="https://www.publicguardian-scotland.gov.uk/general/contact-us">OPG Contact Us</a></li>
+			</ul>
+			</div>
+		</div>
+	  </div>
+	  <div class="content">
+	<div class='page'>
+		<div class="page-header"><h1>Circle CI</h1></div>
+		<div><p>We use CircleCI for our deployment pipeline. Each repo has it's own circleci config file that 
+controls the steps involved in deployment.</p>
+<p>We do branch based deployments. In practice this means that we build an environment on every 
+push to a branch and the environment is built using terraform workspaces to separate our 
+environments.</p>
+<p>As such we have the following environments</p>
+<table>
+<thead>
+<tr>
+<th>Branch</th>
+<th align="center">AWS Account</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PR Based</td>
+<td align="center">Development</td>
+</tr>
+<tr>
+<td>Development</td>
+<td align="center">Development</td>
+</tr>
+<tr>
+<td>PreProduction</td>
+<td align="center">PreProduction</td>
+</tr>
+<tr>
+<td>Production</td>
+<td align="center">Production</td>
+</tr>
+</tbody>
+</table>
+<p>In general the CircleCI jobs are quite standard but we do have one interesting bit of setup:
+For pact, the pact broker can kick off an individual workflow to manage the pact check. 
+This is done through a series of conditional variables that say which workflows 
+can be kicked off.</p></div>
+	</div>
+		<footer>
+		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
+		  <p>&copy; Ministry of Justice</p>
+		</footer>
+	  </div>
+
+	</div>
+</body>
+</html>
