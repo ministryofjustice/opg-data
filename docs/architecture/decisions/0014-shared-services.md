@@ -10,7 +10,7 @@ Accepted
 
 As we move to a structure where products share services rather than being purely isolated systems, we are moving away from a model where the API Gateway acts solely as a pathway into the Sirius Backend API. Early integrations such as providing LPAs to __Use and LPA__ or passing files from the __Digital Deputies Reporting Service__ were thin layers of translation over the existing Sirius API.
 
-The next phase of our API work is to move to a model where multiple products share and use an API that owns all its data, and encapsulates a need in the OPG domain. Our first example is the Use an LPA codes service, which provides data for both Sirius Case Management and the Use an LPA service, but is independent of both. 
+The next phase of our API work is to move to a model where multiple products share and use an API that owns all its data, and encapsulates a need in the OPG domain. Our first example is the Use an LPA codes service, which provides data for both Sirius Case Management and the Use an LPA service, but is independent of both.
 
 This is in parallel to work that is splitting Sirius into smaller services, with the expectation that the two streams of work will eventually converge as a set of isolated services that can be recomposed into new products, our "Service Swarm".
 
