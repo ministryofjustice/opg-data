@@ -482,7 +482,7 @@ paths:
     description: Lodging and review checklists associated with client reports
     put:
       summary: Update a report lodging or review checklist
-      description: Add a report lodging or review checklist
+      description: Update a report lodging or review checklist
       operationId: app.updateReportChecklist
       tags:
         - "deputy-reporting"
