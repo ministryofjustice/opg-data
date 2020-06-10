@@ -533,8 +533,8 @@ paths:
                     data:
                       $ref: '#/components/schemas/ReportSupportingDocument'
       responses:
-        201:
-          description: Document created
+        200:
+          description: Document updated
           content:
             application/vnd.opg-data.v1+json:
               schema:
