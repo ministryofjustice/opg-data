@@ -2,12 +2,85 @@
 version: 2.1
 
 workflows:
-  on_build:
+  on_pull_request:
     jobs:
       - validate_documents:
-          name: build and artifact
+          name: validate documents
           filters: {branches:{ignore:[master]}}
-
+      - terraform_checks:
+          name: run terraform checks
+          filters: {branches:{ignore:[master]}}
+  master:
+    jobs:
+      - terraform_command:
+          name: apply development
+          tf_command: apply
+          tf_workspace: development
+          filters: {branches:{only:[master]}}
+      - terraform_command:
+          name: apply preproduction
+          tf_command: apply
+          tf_workspace: preproduction
+          requires: [apply development]
+          filters: {branches:{only:[master]}}
+      - approve:
+          name: approve release to production
+          type: approval
+          requires: [apply preproduction]
+          filters: {branches:{only:[master]}}
+      - terraform_command:
+          name: apply production
+          requires: [approve release to production]
+          tf_command: apply
+          tf_workspace: production
+          filters: {branches:{only:[master]}}
+orbs:
+  opg-data:
+    executors:
+      python_with_tfvars:
+        docker:
+          - image: circleci/python:3.8.1
+        environment:
+          TF_VERSION: 0.12.23
+          TF_SHA256SUM: 78fd53c0fffd657ee0ab5decac604b0dea2e6c0d4199a9f27db53f081d831a45
+          TF_CLI_ARGS_plan: -input=false -lock=false
+          TF_CLI_ARGS_apply: -input=false -auto-approve
+          TF_CLI_ARGS_destroy: -input=false -auto-approve
+          TF_CLI_ARGS_init: -input=false -upgrade=true -reconfigure
+          TF_VAR_default_role: sirius-ci
+      python:
+        docker:
+          - image: circleci/python:3.8.1
+    commands:
+      terraform_install:
+        steps:
+          - run:
+              name: Download Terraform
+              command: curl -sfSO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+          - run:
+              name: Add Terraform SHA256SUM
+              command: echo "${TF_SHA256SUM} terraform_${TF_VERSION}_linux_amd64.zip" > SHA256SUMS
+          - run:
+              name: Check Terraform SHA256SUM
+              command: sha256sum -c --status SHA256SUMS
+          - run:
+              name: Install Terraform
+              command: sudo unzip terraform_${TF_VERSION}_linux_amd64.zip -d /bin
+      run_plan:
+        parameters:
+          tf_workspace:
+            description: terraform workspace
+            type: string
+        steps:
+          - run:
+              name: terraform plan on << parameters.tf_workspace >>
+              working_directory: ~/project/terraform
+              command: |
+                export TFDIR=".terraform"
+                if [ -d "$TFDIR" ]; then rm -rf $TFDIR; fi
+                export TF_WORKSPACE=<< parameters.tf_workspace >>
+                terraform init
+                terraform plan -input=false
 jobs:
   validate_documents:
     docker:
@@ -20,3 +93,56 @@ jobs:
       - run:
           name: run markdownlint
           command: mdl -r MD001,MD002,MD003,MD004,MD005,MD006,MD007,MD009,MD010,MD011,MD012,MD018,MD019,MD022,MD023,MD025,MD030,MD031,MD032,MD037,MD038,MD039,MD046 .
+  terraform_checks:
+    executor: opg-data/python_with_tfvars
+    parameters:
+      tf_workspace:
+        description: terraform workspace
+        type: string
+        default: "development"
+    working_directory: ~/project
+    steps:
+      - checkout
+      - opg-data/terraform_install
+      - run:
+          name: terraform init
+          working_directory: ~/project/terraform
+          command: terraform init
+      - run:
+          name: terraform check formatting - environment
+          working_directory: ~/project/terraform
+          command: terraform fmt -diff -check -recursive
+      - run:
+          name: validate terraform - environment
+          working_directory: ~/project/terraform
+          command: terraform validate
+      - opg-data/run_plan:
+          tf_workspace: "development"
+      - opg-data/run_plan:
+          tf_workspace: "preproduction"
+      - opg-data/run_plan:
+          tf_workspace: "production"
+  terraform_command:
+    executor: opg-data/python_with_tfvars
+    parameters:
+      tf_workspace:
+        description: terraform workspace
+        type: string
+        default: ""
+      tf_command:
+        description: terraform command
+        default: plan
+        type: string
+    environment:
+      TF_WORKSPACE: << parameters.tf_workspace >>
+    steps:
+      - checkout
+      - opg-data/terraform_install
+      - run:
+          name: initialize terraform - << parameters.tf_workspace >>
+          working_directory: ~/project/terraform
+          command: terraform init
+      - run:
+          name: terraform << parameters.tf_command >> - << parameters.tf_workspace >>
+          working_directory: ~/project/terraform
+          command: terraform << parameters.tf_command >>
