@@ -10,6 +10,9 @@ workflows:
       - terraform_checks:
           name: run terraform checks
           filters: {branches:{ignore:[master]}}
+      - shared_code:
+          name: shared code
+          filters: {branches:{ignore:[master]}}
   master:
     jobs:
       - terraform_command:
@@ -74,7 +77,7 @@ orbs:
         steps:
           - run:
               name: terraform plan on << parameters.tf_workspace >>
-              working_directory: ~/project/terraform
+              working_directory: ~/project/infrastructure/terraform
               command: |
                 export TFDIR=".terraform"
                 if [ -d "$TFDIR" ]; then rm -rf $TFDIR; fi
@@ -93,6 +96,37 @@ jobs:
       - run:
           name: run markdownlint
           command: mdl -r MD001,MD002,MD003,MD004,MD005,MD006,MD007,MD009,MD010,MD011,MD012,MD018,MD019,MD022,MD023,MD025,MD030,MD031,MD032,MD037,MD038,MD039,MD046 .
+  shared_code:
+    executor: opg-data/python_with_tfvars
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: install prerequisites
+          command: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install awscli --upgrade --user
+          working_directory: ~/project/infrastructure/code-artifact-setup
+      - run:
+          name: setup code artifact repo
+          command: python setup_code_artifact.py
+          working_directory: ~/project/infrastructure/code-artifact-setup
+      - run:
+          name: install packaging applications
+          command: python -m pip install --user --upgrade setuptools wheel
+      - run:
+          name: package shared code
+          command: python setup.py sdist bdist_wheel
+          working_directory: ~/project/shared-code
+      - run:
+          name: login to code artifact
+          command: ./login_code_artifact.sh
+          working_directory: ~/project/shared-code
+      - run:
+          name: upload shared code
+          command: python -m twine upload --repository codeartifact dist/* --skip-existing
+          working_directory: ~/project/shared-code
   terraform_checks:
     executor: opg-data/python_with_tfvars
     parameters:
@@ -106,15 +140,15 @@ jobs:
       - opg-data/terraform_install
       - run:
           name: terraform init
-          working_directory: ~/project/terraform
+          working_directory: ~/project/infrastructure/terraform
           command: terraform init
       - run:
           name: terraform check formatting - environment
-          working_directory: ~/project/terraform
+          working_directory: ~/project/infrastructure/terraform
           command: terraform fmt -diff -check -recursive
       - run:
           name: validate terraform - environment
-          working_directory: ~/project/terraform
+          working_directory: ~/project/infrastructure/terraform
           command: terraform validate
       - opg-data/run_plan:
           tf_workspace: "development"
@@ -140,9 +174,9 @@ jobs:
       - opg-data/terraform_install
       - run:
           name: initialize terraform - << parameters.tf_workspace >>
-          working_directory: ~/project/terraform
+          working_directory: ~/project/infrastructure/terraform
           command: terraform init
       - run:
           name: terraform << parameters.tf_command >> - << parameters.tf_workspace >>
-          working_directory: ~/project/terraform
+          working_directory: ~/project/infrastructure/terraform
           command: terraform << parameters.tf_command >>
