@@ -109,6 +109,25 @@ jobs:
             pip install awscli --upgrade --user
           working_directory: ~/project/infrastructure/code-artifact-setup
       - run:
+          name: login to code artifact
+          command: ./login_code_artifact.sh
+          working_directory: ~/project/shared-code
+      - run:
+          name: install cancel build requirements
+          command: pip3 install -r requirements.txt
+          working_directory: ~/project/docs/ci_scripts
+      - run:
+          name: cancel previous builds
+          command: |
+            python3 cancel_builds.py \
+            --circle_project_username="${CIRCLE_PROJECT_USERNAME}" \
+            --circle_project_reponame="${CIRCLE_PROJECT_REPONAME}" \
+            --circle_branch="${CIRCLE_BRANCH}" \
+            --circle_builds_token="${CIRCLE_BUILDS_TOKEN}" \
+            --terms_to_waitfor="apply,plan,terraform" \
+            --prod_job_terms=" production,shared-production"
+          working_directory: ~/project/docs/ci_scripts
+      - run:
           name: setup code artifact repo
           command: python setup_code_artifact.py
           working_directory: ~/project/infrastructure/code-artifact-setup
@@ -118,10 +137,6 @@ jobs:
       - run:
           name: package shared code
           command: python setup.py sdist bdist_wheel
-          working_directory: ~/project/shared-code
-      - run:
-          name: login to code artifact
-          command: ./login_code_artifact.sh
           working_directory: ~/project/shared-code
       - run:
           name: upload shared code
