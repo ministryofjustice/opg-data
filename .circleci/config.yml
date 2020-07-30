@@ -95,7 +95,8 @@ jobs:
           command: gem install mdl
       - run:
           name: run markdownlint
-          command: mdl -r MD001,MD002,MD003,MD004,MD005,MD006,MD007,MD009,MD010,MD011,MD012,MD018,MD019,MD022,MD023,MD025,MD030,MD031,MD032,MD037,MD038,MD039,MD046 .
+          command: |
+            mdl -r MD001,MD002,MD003,MD004,MD005,MD006,MD007,MD009,MD010,MD011,MD012,MD018,MD019,MD022,MD023,MD025,MD030,MD031,MD032,MD037,MD038,MD039,MD046 docs
   shared_code:
     executor: opg-data/python_with_tfvars
     working_directory: ~/project
@@ -109,6 +110,25 @@ jobs:
             pip install awscli --upgrade --user
           working_directory: ~/project/infrastructure/code-artifact-setup
       - run:
+          name: login to code artifact for pip
+          command: ./login_code_artifact.sh -a 288342028542 -t pip
+          working_directory: ~/project/docs/ci_scripts
+      - run:
+          name: install cancel build requirements
+          command: pip3 install -r requirements.txt
+          working_directory: ~/project/docs/ci_scripts
+      - run:
+          name: cancel previous builds
+          command: |
+            python3 cancel_builds.py \
+            --circle_project_username="${CIRCLE_PROJECT_USERNAME}" \
+            --circle_project_reponame="${CIRCLE_PROJECT_REPONAME}" \
+            --circle_branch="${CIRCLE_BRANCH}" \
+            --circle_builds_token="${CIRCLE_BUILDS_TOKEN}" \
+            --terms_to_waitfor="apply,plan,terraform" \
+            --prod_job_terms=" production,shared-production"
+          working_directory: ~/project/docs/ci_scripts
+      - run:
           name: setup code artifact repo
           command: python setup_code_artifact.py
           working_directory: ~/project/infrastructure/code-artifact-setup
@@ -120,9 +140,9 @@ jobs:
           command: python setup.py sdist bdist_wheel
           working_directory: ~/project/shared-code
       - run:
-          name: login to code artifact
-          command: ./login_code_artifact.sh
-          working_directory: ~/project/shared-code
+          name: login to code artifact for twine
+          command: ./login_code_artifact.sh -a 288342028542 -t twine
+          working_directory: ~/project/docs/ci_scripts
       - run:
           name: upload shared code
           command: python -m twine upload --repository codeartifact dist/* --skip-existing

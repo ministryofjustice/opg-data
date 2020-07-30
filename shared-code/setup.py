@@ -1,14 +1,14 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("shared_code.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="opg-integrations-python",
-    version="0.0.1",
+    name="opg_integrations_shared",
+    version="0.0.2",
     author="OPG",
     author_email="example@digital.justice.gov.uk",
-    description="A small example package",
+    description="Shared Integrations Code",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ministryofjustice/opg-data",

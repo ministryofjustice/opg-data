@@ -25,11 +25,9 @@ python3 -m pip install --user --upgrade twine
 Login for publishing
 
 ```
-aws-vault exec sandbox -- aws codeartifact login --tool twine \
---repository jim_test --domain opg-moj --domain-owner 995199299616 --region eu-west-1
+aws-vault exec sirius-dev -- aws codeartifact login --tool twine \
+--repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
 ```
-
-arn:aws:kms:eu-west-1:995199299616:key/91efc530-178d-4055-9d6f-51dc644b8634
 
 Upload to a repo
 
@@ -37,11 +35,17 @@ Upload to a repo
 python3 -m twine upload --repository codeartifact dist/*
 ```
 
-Login to repo for pull
+Login to repo to be able to pull
 
 ```
-aws-vault exec sandbox -- aws codeartifact login --tool pip \
---repository jim_test --domain opg-moj --domain-owner 995199299616 --region eu-west-1
+aws-vault exec sirius-dev -- aws codeartifact login --tool pip3 \
+--repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+```
+
+Pull using pip in the usual way
+
+```
+pip3 install opg_integrations_shared==0.0.1
 ```
 
 No terraform code artifact yet (but coming very soon):
