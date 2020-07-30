@@ -9,7 +9,7 @@ from .endpoints import handle_template
 
 logger = custom_logger("template")
 
-version = os.getenv("API_VERSION")
+version = "v1"
 api = Blueprint("api", __name__, url_prefix=f"/{version}")
 
 
