@@ -5,7 +5,7 @@ with open("shared_code.md", "r") as fh:
 
 setuptools.setup(
     name="opg_integrations_shared",
-    version="0.0.2",
+    version="0.0.3",
     author="OPG",
     author_email="example@digital.justice.gov.uk",
     description="Shared Integrations Code",
