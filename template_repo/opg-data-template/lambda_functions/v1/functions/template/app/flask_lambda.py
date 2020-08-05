@@ -40,7 +40,7 @@ __version__ = "0.0.4"
 def make_environ(event):
     environ = {}
     print("resource:", event["resource"], "path:", event["path"])
-    # key might be there but set to None
+    # key might be there but set to None.
     headers = event.get("headers", {}) or {}
     for hdr_name, hdr_value in headers.items():
         hdr_name = hdr_name.replace("-", "_").upper()
@@ -56,7 +56,6 @@ def make_environ(event):
     environ["REQUEST_METHOD"] = event["httpMethod"]
     environ["PATH_INFO"] = event["path"]
     environ["QUERY_STRING"] = urlencode(qs) if qs else ""
-
     environ["REMOTE_ADDR"] = environ.get("X_FORWARDED_FOR")
 
     environ["HOST"] = "{}:{}".format(
@@ -64,12 +63,9 @@ def make_environ(event):
     )
     environ["SCRIPT_NAME"] = ""
     environ["SERVER_NAME"] = "SERVER_NAME"
-
     environ["SERVER_PORT"] = environ.get("HTTP_X_FORWARDED_PORT", "")
     environ["SERVER_PROTOCOL"] = "HTTP/1.1"
-
     environ["CONTENT_LENGTH"] = str(len(event["body"]) if event["body"] else "")
-
     environ["wsgi.url_scheme"] = environ.get("HTTP_X_FORWARDED_PROTO")
     environ["wsgi.input"] = StringIO(event["body"] or "")
     environ["wsgi.version"] = (1, 0)

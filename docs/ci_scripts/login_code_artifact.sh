@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-#!/bin/bash
-
 while getopts t:a: option
 do
   case "${option}"

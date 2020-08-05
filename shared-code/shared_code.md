@@ -38,7 +38,7 @@ python3 -m twine upload --repository codeartifact dist/*
 Login to repo to be able to pull
 
 ```
-aws-vault exec sirius-dev -- aws codeartifact login --tool pip3 \
+aws-vault exec sirius-dev -- aws codeartifact login --tool pip \
 --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
 ```
 
