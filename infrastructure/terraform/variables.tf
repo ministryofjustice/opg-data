@@ -8,6 +8,7 @@ variable "accounts" {
       account_id     = string
       alerts_channel = string
       is_production  = string
+      vpc_id         = string
     })
   )
 }
