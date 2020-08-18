@@ -10,4 +10,3 @@ def aws_credentials():
     os.environ["AWS_SESSION_TOKEN"] = "testing"
     os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
     os.environ["AWS_XRAY_CONTEXT_MISSING"] = "LOG_ERROR"
-

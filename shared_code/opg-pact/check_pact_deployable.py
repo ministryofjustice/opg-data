@@ -38,12 +38,12 @@ class PactDeploymentCheck:
 
         current_folder = os.path.basename(os.path.normpath(os.getcwd()))
         if "CI" in os.environ:
-            if current_folder == "test":
+            if current_folder == "tests":
                 self.pact_path_prefix = "../../"
             else:
                 self.pact_path_prefix = "../"
         else:
-            if current_folder == "test":
+            if current_folder == "tests":
                 self.pact_path_prefix = "../../../"
             else:
                 self.pact_path_prefix = "../../"

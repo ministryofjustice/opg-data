@@ -1,6 +1,4 @@
-import os
-
-from flask import Blueprint, abort
+from flask import Blueprint
 from flask import request, jsonify
 
 from .errors import error_message

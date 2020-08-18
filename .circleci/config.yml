@@ -98,7 +98,7 @@ jobs:
       - run:
           name: run markdownlint
           command: |
-            mdl -r MD001,MD002,MD003,MD004,MD005,MD006,MD007,MD009,MD010,MD011,MD012,MD018,MD019,MD022,MD023,MD025,MD030,MD031,MD032,MD037,MD038,MD039,MD046 docs
+            mdl -r MD001,MD003,MD004,MD005,MD006,MD007,MD009,MD010,MD011,MD012,MD018,MD019,MD022,MD023,MD025,MD030,MD031,MD032,MD037,MD038,MD039,MD046 docs
   shared_code:
     executor: opg-data/python_with_tfvars
     working_directory: ~/project
@@ -110,7 +110,7 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install awscli --upgrade --user
-          working_directory: ~/project/infrastructure/code-artifact-setup
+          working_directory: ~/project/infrastructure/code_artifact_setup
       - run:
           name: login to code artifact for pip
           command: ./login_code_artifact.sh -a 288342028542 -t pip
@@ -130,6 +130,7 @@ jobs:
             --terms_to_waitfor="apply,plan,terraform" \
             --prod_job_terms=" production,shared-production"
           working_directory: ~/project/docs/ci_scripts
+      - setup_remote_docker
       - run:
           name: run pact tests
           command: |
