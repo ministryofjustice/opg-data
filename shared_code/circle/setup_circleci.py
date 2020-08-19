@@ -4,8 +4,8 @@ with open("shared_code.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="opg-pact",
-    version="0.0.1",
+    name="opg-circleci",
+    version="0.0.3",
     author="OPG",
     author_email="example@digital.justice.gov.uk",
     description="Shared Integrations Code",
@@ -18,5 +18,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.7',
+    python_requires=">=3.7",
 )
