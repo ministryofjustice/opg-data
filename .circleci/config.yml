@@ -138,7 +138,7 @@ jobs:
             sleep 3
             docker-compose run python_tests python -m pytest
             docker-compose down
-          working_directory: ~/project/shared_code/opg-pact
+          working_directory: ~/project/shared_code/pact/opg_pact
       - run:
           name: setup code artifact repo
           command: python setup_code_artifact.py
@@ -149,19 +149,23 @@ jobs:
       - run:
           name: package shared circleci
           command: python setup_circleci.py sdist bdist_wheel
-          working_directory: ~/project/shared_code
+          working_directory: ~/project/shared_code/circle
       - run:
           name: package shared pact
           command: python setup_pact.py sdist bdist_wheel
-          working_directory: ~/project/shared_code
+          working_directory: ~/project/shared_code/pact
       - run:
           name: login to code artifact for twine
           command: ./login_code_artifact.sh -a 288342028542 -t twine
           working_directory: ~/project/docs/ci_scripts
       - run:
-          name: upload shared code
+          name: upload shared circleci
           command: python -m twine upload --repository codeartifact dist/* --skip-existing
-          working_directory: ~/project/shared_code
+          working_directory: ~/project/shared_code/circle
+      - run:
+          name: upload shared pact
+          command: python -m twine upload --repository codeartifact dist/* --skip-existing
+          working_directory: ~/project/shared_code/pact
   terraform_checks:
     executor: opg-data/python_with_tfvars
     parameters:

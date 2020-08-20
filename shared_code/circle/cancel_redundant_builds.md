@@ -12,13 +12,13 @@ They check for the terms you enter against the names of the jobs. The `terms_to_
 wait for before cancelling the workflow. Whereas, for any job that matches the  `prod_job_terms`, the entire workflow is
 ignored and won't be cancelled.
 
-You can add the script to a separate stage or just early on in one of your initial existing stages if you want to 
+You can add the script to a separate stage or just early on in one of your initial existing stages if you want to
 save on spinning up a new box and you have python installed.
 
 You will need an API key installed on circle for the cancellation portion bit to work correctly.
 
 Example:
-1. Workflow A is running a terraform job on Branch Z. 
+1. Workflow A is running a terraform job on Branch Z.
 2. You start Workflow B.
 3. Workflow B runs the script and waits for Workflow A's terraform job to finish.
 4. When finished, it waits for a new job to start.

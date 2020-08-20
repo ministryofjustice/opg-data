@@ -55,4 +55,3 @@ services:
         default:
           aliases:
             - local.mock
-
