@@ -142,6 +142,7 @@ jobs:
       - run:
           name: run sirius service tests
           command: |
+            python3 -m pip install -r shared_code/sirius_service/opg_sirius_service/requirements.txt
             python3 -m pytest shared_code/sirius_service/tests
       - run:
           name: setup code artifact repo
