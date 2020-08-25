@@ -29,3 +29,4 @@ __pycache__
 /shared_code/sirius_service/dist/
 /shared_code/sirius_service/opg_sirius_service.egg-info/
 /venv/
+/shared_code/sirius_service/tests/.hypothesis/
