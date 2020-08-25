@@ -4,7 +4,7 @@ import fakeredis
 import pytest
 
 
-from shared_code.siriusservice.sirius_service.sirius_handler import SiriusService
+from shared_code.sirius_service.opg_sirius_service.sirius_handler import SiriusService
 import requests
 
 

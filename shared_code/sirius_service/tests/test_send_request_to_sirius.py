@@ -3,7 +3,7 @@ import json
 import fakeredis
 import pytest
 
-from shared_code.siriusservice.sirius_service.sirius_handler import SiriusService
+from shared_code.sirius_service.opg_sirius_service.sirius_handler import SiriusService
 from .conftest import SiriusServiceTestConfig
 
 test_redis_handler = fakeredis.FakeStrictRedis(charset="utf-8", decode_responses=True)

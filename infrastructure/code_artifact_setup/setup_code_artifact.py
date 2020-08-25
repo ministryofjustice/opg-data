@@ -5,7 +5,7 @@ from boto3.session import Session
 # Set up for a local env for trialling purposes
 domain = "opg-moj"
 account = "288342028542"
-repository = 'opg-pip-shared-code-dev'
+repository = "opg-pip-shared-code-dev"
 
 if "CI" in os.environ:
     role_name = "sirius-ci"
@@ -33,11 +33,13 @@ account_id = client.get_caller_identity()["Account"]
 print(account_id)
 
 
-code_artifact = session.client('codeartifact')
+code_artifact = session.client("codeartifact")
 
 try:
     response = code_artifact.create_domain(domain=domain)
-    response_create_domain = "Domain created. Response code: " + str(response["ResponseMetadata"]["HTTPStatusCode"])
+    response_create_domain = "Domain created. Response code: " + str(
+        response["ResponseMetadata"]["HTTPStatusCode"]
+    )
 except code_artifact.exceptions.ConflictException:
     response_create_domain = f"Domain, {domain} already exists"
 
@@ -48,9 +50,11 @@ try:
         domain=domain,
         domainOwner=account,
         repository=repository,
-        description='OPG shared python code',
+        description="OPG shared python code",
     )
-    response_create_repo = "Repo created. Response code: " + str(response["ResponseMetadata"]["HTTPStatusCode"])
+    response_create_repo = "Repo created. Response code: " + str(
+        response["ResponseMetadata"]["HTTPStatusCode"]
+    )
 except code_artifact.exceptions.ConflictException:
     response_create_repo = f"Repository, {repository} already exists"
 
@@ -73,9 +77,10 @@ policy_document = '{"Version":"2012-10-17","Statement":\
 
 try:
     response_put_policy = code_artifact.put_domain_permissions_policy(
-        domain=domain,
-        policyDocument=policy_document
+        domain=domain, policyDocument=policy_document
     )
-    response_put_policy = "Repo created. Response code: " + str(response["ResponseMetadata"]["HTTPStatusCode"])
+    response_put_policy = "Repo created. Response code: " + str(
+        response["ResponseMetadata"]["HTTPStatusCode"]
+    )
 except:
     print("Error adding policy")

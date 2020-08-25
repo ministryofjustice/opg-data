@@ -1,6 +1,6 @@
 import fakeredis
 
-from shared_code.siriusservice.sirius_service.sirius_handler import SiriusService
+from shared_code.sirius_service.opg_sirius_service.sirius_handler import SiriusService
 from .default_config import SiriusServiceTestConfig
 
 
