@@ -1,0 +1,10 @@
+boto3
+requests-aws4auth
+moto
+pyjwt
+hypothesis
+validators
+yarl
+localstack-client
+fakeredis
+pytest

@@ -25,3 +25,8 @@ __pycache__
 # Test environment
 *generated.postman_environment.json
 
+build/
+dist/
+*.egg*
+/venv/
+.hypothesis/
