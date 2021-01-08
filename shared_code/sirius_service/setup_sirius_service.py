@@ -5,7 +5,7 @@ with open("sirius_service.md", "r") as fh:
 
 setuptools.setup(
     name="opg_sirius_service",
-    version="0.0.1",
+    version="0.0.2",
     author="OPG",
     author_email="example@digital.justice.gov.uk",
     description="Sirius Service",
@@ -18,5 +18,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.7",
+    python_requires="==3.7",
 )
