@@ -32,6 +32,7 @@ def patched_get_secret(monkeypatch):
 @pytest.fixture()
 def patched_build_sirius_headers(monkeypatch):
     def mock_headers(*args, **kwargs):
+        print("patched_build_sirius_headers returning mock_headers")
 
         return {
             "Content-Type": args[0] if args[0] else "application/json",
