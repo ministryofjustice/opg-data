@@ -19,4 +19,9 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.7",
+    install_requires = [
+        "boto3",
+        "requests-aws4auth==1.0.1",
+        "pyjwt==1.7.1",
+    ]
 )
