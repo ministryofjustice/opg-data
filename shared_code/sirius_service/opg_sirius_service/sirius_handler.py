@@ -206,6 +206,9 @@ class SiriusService:
 
             elif method == "POST":
                 r = requests.post(url=url, data=data, headers=headers)
+                if r.status_code == 204:
+                    return r.status_code, ""
+
                 return r.status_code, r.json()
             elif method == "GET":
                 r = requests.get(url=url, headers=headers)
