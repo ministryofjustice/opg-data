@@ -1,5 +1,7 @@
 resource "aws_sns_topic" "rest_api" {
-  name = "rest-api"
+  name              = "rest-api"
+  kms_master_key_id = "alias/aws/sns"
+  tags              = local.default_tags
 }
 
 module "notify_slack" {
