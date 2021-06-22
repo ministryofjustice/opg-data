@@ -64,7 +64,7 @@ orbs:
           TF_CLI_ARGS_apply: -input=false -auto-approve
           TF_CLI_ARGS_destroy: -input=false -auto-approve
           TF_CLI_ARGS_init: -input=false -upgrade=true -reconfigure
-          TF_VAR_default_role: sirius-ci
+          TF_VAR_default_role: integrations-ci
       python:
         docker:
           - image: circleci/python:3.8.1

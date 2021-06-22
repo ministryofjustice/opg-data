@@ -115,7 +115,7 @@ orbs:
           TF_CLI_ARGS_apply: -input=false -auto-approve
           TF_CLI_ARGS_destroy: -input=false -auto-approve
           TF_CLI_ARGS_init: -input=false -upgrade=true -reconfigure
-          TF_VAR_default_role: sirius-ci
+          TF_VAR_default_role: integrations-ci
           TF_VERSION: 0.12.26
           TF_SHA256SUM: 607bc802b1c6c2a5e62cc48640f38aaa64bef1501b46f0ae4829feb51594b257
       python:

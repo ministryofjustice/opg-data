@@ -41,7 +41,7 @@ def send_a_request(
         body = None
 
     if "CI" in os.environ:
-        role_name = "sirius-ci"
+        role_name = "integrations-ci"
     else:
         role_name = "operator"
 
