@@ -8,7 +8,7 @@ account = "288342028542"
 repository = "opg-pip-shared-code-dev"
 
 if "CI" in os.environ:
-    role_name = "sirius-ci"
+    role_name = "integrations-ci"
 else:
     role_name = "operator"
 
@@ -82,5 +82,5 @@ try:
     response_put_policy = "Repo created. Response code: " + str(
         response["ResponseMetadata"]["HTTPStatusCode"]
     )
-except:
+except Exception:
     print("Error adding policy")
