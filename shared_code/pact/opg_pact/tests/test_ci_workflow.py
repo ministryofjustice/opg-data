@@ -274,7 +274,7 @@ def test_working_to_broken():
     assert message == "Consumer Side 'Can I Deploy' Failed!"
     assert (
         actual_message
-        == "The verification between version y123456 of OPGExampleApp and the latest version of OPGExampleAPI with tag v1_production (a123456) failed"
+        == "The verification for the pact between version y123456 of OPGExampleApp and the latest version of OPGExampleAPI with tag v1_production (a123456) failed"
     )
 
 
