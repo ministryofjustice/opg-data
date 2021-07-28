@@ -7,7 +7,7 @@ setuptools.setup(
     name="opg_sirius_service",
     version="0.1.0",
     author="OPG",
-    author_email="example@digital.justice.gov.uk",
+    author_email="opg-integrations@digital.justice.gov.uk",
     description="Sirius Service",
     long_description=long_description,
     long_description_content_type="text/markdown",

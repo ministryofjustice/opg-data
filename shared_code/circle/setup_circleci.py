@@ -7,7 +7,7 @@ setuptools.setup(
     name="opg-circleci",
     version="0.0.3",
     author="OPG",
-    author_email="example@digital.justice.gov.uk",
+    author_email="opg-integrations@digital.justice.gov.uk",
     description="Shared Integrations Code",
     long_description=long_description,
     long_description_content_type="text/markdown",
