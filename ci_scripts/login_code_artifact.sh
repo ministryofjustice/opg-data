@@ -23,7 +23,8 @@ export AWS_SECRET_ACCESS_KEY=$(echo "${SECRET_STRING}" | awk -F' ' '{print $2}')
 export AWS_SESSION_TOKEN=$(echo "${SECRET_STRING}" | awk -F' ' '{print $1}')
 
 aws codeartifact login --tool "${TOOL}" \
---repository opg-pip-shared-code-dev \
---domain opg-moj \
+--repository shared-integrations-pip \
+--domain opg-integrations \
 --domain-owner "${ACCOUNT}" \
 --region eu-west-1
+

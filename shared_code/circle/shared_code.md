@@ -25,8 +25,7 @@ python3 -m pip install --user --upgrade twine
 Login for publishing
 
 ```
-aws-vault exec sirius-dev -- aws codeartifact login --tool twine \
---repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+aws-vault exec management-operator -- aws codeartifact login --tool twine --repository shared-integrations-pip --domain opg-integrations --domain-owner 311462405659 --region eu-west-1
 ```
 
 Upload to a repo
@@ -38,8 +37,7 @@ python3 -m twine upload --repository codeartifact dist/*
 Login to repo to be able to pull
 
 ```
-aws-vault exec sirius-dev -- aws codeartifact login --tool pip \
---repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+aws-vault exec management-operator -- aws codeartifact login --tool twine --repository shared-integrations-pip --domain opg-integrations --domain-owner 311462405659 --region eu-west-1
 ```
 
 Pull using pip in the usual way
