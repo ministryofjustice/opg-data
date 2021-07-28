@@ -115,29 +115,20 @@ pip3 install -r requirements
 python3 setup.py sdist bdist_wheel
 ```
 
-3. Login to AWS for publishing:
+3. Upload to the repo:
 
 ```bash
-aws-vault exec management-operator -- aws codeartifact login --tool twine --repository shared-integrations-pip --domain opg-integrations --domain-owner 311462405659 --region eu-west-1
-```
+python3 -m twine upload dist/*
 
-4. Upload to the repo:
-
-```bash
-python3 -m twine upload --repository codeartifact dist/*
+username: __token__
+password: You'll need to obtain this from AWS SecretsManager in the Management Account.
 ```
 
 ## Using your package in another project
 
-1. Login to AWS
-
-```bash
-aws-vault exec management-operator -- aws codeartifact login --tool twine --repository shared-integrations-pip --domain opg-integrations --domain-owner 311462405659 --region eu-west-1
-```
-
-2. Then install using pip in the usual way
+1. Install using pip in the usual way
 
 ```
-pip3 install opg_integrations_shared==0.0.1
+pip3 install opg_sirius_service==0.0.1
 ```
 
