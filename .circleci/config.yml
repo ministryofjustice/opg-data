@@ -128,17 +128,11 @@ jobs:
           name: install prerequisites
           command: |
             python -m pip install --upgrade pip
-            pip install -r requirements.txt
             pip install awscli --upgrade --user
-          working_directory: ~/project/infrastructure/code_artifact_setup
-      - run:
-          name: login to code artifact for pip
-          command: ./login_code_artifact.sh -a 288342028542 -t pip
-          working_directory: ~/project/docs/ci_scripts
       - run:
           name: install cancel build requirements
           command: pip3 install -r requirements.txt
-          working_directory: ~/project/docs/ci_scripts
+          working_directory: ~/project/ci_scripts
       - run:
           name: cancel previous builds
           command: |
@@ -149,7 +143,7 @@ jobs:
             --circle_builds_token="${CIRCLE_BUILDS_TOKEN}" \
             --terms_to_waitfor="apply,plan,terraform" \
             --prod_job_terms=" production,shared-production"
-          working_directory: ~/project/docs/ci_scripts
+          working_directory: ~/project/ci_scripts
       - setup_remote_docker
       - run:
           name: run pact tests
@@ -165,39 +159,37 @@ jobs:
             python3 -m pip install -r shared_code/sirius_service/opg_sirius_service/requirements.txt
             python3 -m pytest shared_code/sirius_service/tests
       - run:
-          name: setup code artifact repo
-          command: python setup_code_artifact.py
-          working_directory: ~/project/infrastructure/code_artifact_setup
-      - run:
           name: install packaging applications
-          command: python -m pip install --user --upgrade setuptools wheel
+          command: python -m pip install --user --upgrade setuptools wheel twine
       - run:
           name: package shared circleci
-          command: python setup_circleci.py sdist bdist_wheel
+          command: python setup.py sdist bdist_wheel
           working_directory: ~/project/shared_code/circle
       - run:
           name: package shared pact
-          command: python setup_pact.py sdist bdist_wheel
+          command: python setup.py sdist bdist_wheel
           working_directory: ~/project/shared_code/pact
       - run:
           name: package shared sirius service
-          command: python setup_sirius_service.py sdist bdist_wheel
+          command: python setup.py sdist bdist_wheel
           working_directory: ~/project/shared_code/sirius_service
       - run:
-          name: login to code artifact for twine
-          command: ./login_code_artifact.sh -a 288342028542 -t twine
-          working_directory: ~/project/docs/ci_scripts
+          name: init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = __token__" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
       - run:
           name: upload shared circleci
-          command: python -m twine upload --repository codeartifact dist/* --skip-existing
+          command: python -m twine upload dist/* --skip-existing
           working_directory: ~/project/shared_code/circle
       - run:
           name: upload shared pact
-          command: python -m twine upload --repository codeartifact dist/* --skip-existing
+          command: python -m twine upload dist/* --skip-existing
           working_directory: ~/project/shared_code/pact
       - run:
           name: upload shared sirius service
-          command: python -m twine upload --repository codeartifact dist/* --skip-existing
+          command: python -m twine upload dist/* --skip-existing
           working_directory: ~/project/shared_code/sirius_service
   terraform_checks:
     executor: opg-data/python_with_tfvars

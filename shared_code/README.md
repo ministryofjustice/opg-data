@@ -1,8 +1,8 @@
-# General instructions for adding a package to AWS Code Artifact
+# General instructions for adding a package to PyPi
 
 ## Preparing your code
 
-The main thing to get right is the folder structure. 
+The main thing to get right is the folder structure.
 
 Create a new folder in the `shared_code` directory. This will hold all of the code and settings for your package. The name doesn't matter here, just call it something sensible.
 
@@ -32,7 +32,7 @@ You will now create a handful of files to package up this project and prepare it
 
 `setup.py` is the build script for [setuptools](https://packaging.python.org/key_projects/#setuptools). It tells setuptools about your package (such as the name and version) as well as which code files to include.
 
-Open `setup.py` and enter the following content. 
+Open `setup.py` and enter the following content.
 
 ```python
 import setuptools
@@ -60,7 +60,7 @@ setuptools.setup(
 
 ```
 
-This is a very simple version of `setup.py`, you can make this [much more complicated](https://packaging.python.org/guides/distributing-packages-using-setuptools/#setup-py) if you need to. This example version uses `find_namespace_packages` to ensure we just build only the project files and don't include things like tests and other unneccessary files. 
+This is a very simple version of `setup.py`, you can make this [much more complicated](https://packaging.python.org/guides/distributing-packages-using-setuptools/#setup-py) if you need to. This example version uses `find_namespace_packages` to ensure we just build only the project files and don't include things like tests and other unneccessary files.
 
 ### Creating README.md
 
@@ -100,9 +100,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-
-
-## Packaging and uploading to CodeArtifact
+## Packaging and uploading to PyPi
 
 1. Install the requirements:
 
@@ -117,31 +115,20 @@ pip3 install -r requirements
 python3 setup.py sdist bdist_wheel
 ```
 
-3. Login to AWS for publishing:
+3. Upload to the repo:
 
 ```bash
-aws-vault exec sirius-dev -- aws codeartifact login --tool twine --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+python3 -m twine upload dist/*
+
+username: __token__
+password: You'll need to obtain this from AWS SecretsManager in the Management Account.
 ```
-
-4. Upload to the repo:
-
-```bash
-python3 -m twine upload --repository codeartifact dist/*
-```
-
-
 
 ## Using your package in another project
 
-1. Login to AWS 
-
-```bash
-aws-vault exec sirius-dev -- aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
-```
-
-2. Then install using pip in the usual way
+1. Install using pip in the usual way
 
 ```
-pip3 install opg_integrations_shared==0.0.1
+pip3 install opg_sirius_service==0.0.1
 ```
 
