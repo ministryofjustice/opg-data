@@ -1,4 +1,4 @@
-# General instructions for adding a package to AWS Code Artifact
+# General instructions for adding a package to PyPi
 
 ## Preparing your code
 
@@ -100,7 +100,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-## Packaging and uploading to CodeArtifact
+## Packaging and uploading to PyPi
 
 1. Install the requirements:
 
