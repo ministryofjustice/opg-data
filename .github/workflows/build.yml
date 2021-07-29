@@ -13,18 +13,9 @@ defaults:
   shell: bash
 
 jobs:
-  validate_documents:
-    name: Validate Docs
-    runs-on: "ubuntu-latest"
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run markdownlint
-        uses: actionshub/markdownlint@main
-  
   terraform_checks:
     name: Validate ${{ matrix.environment }}
     runs-on: "ubuntu-latest"
-    needs: validate_documents
     strategy:
       max-parallel: 1
       matrix:
