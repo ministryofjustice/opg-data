@@ -4,6 +4,37 @@ resource "aws_sns_topic" "rest_api" {
   tags              = local.default_tags
 }
 
+resource "aws_sns_topic_subscription" "cloudwatch_sns_subscription_integrations" {
+  topic_arn              = aws_sns_topic.rest_api.arn
+  protocol               = "https"
+  endpoint_auto_confirms = true
+  endpoint               = "https://events.pagerduty.com/integration/${local.account.is_production == "true" ? pagerduty_service_integration.cloudwatch_integrations.integration_key : pagerduty_service_integration.cloudwatch_integration_non_production.integration_key}/enqueue"
+}
+
+data "pagerduty_vendor" "cloudwatch" {
+  name = "Cloudwatch"
+}
+
+data "pagerduty_service" "sirius_non_prod" {
+  name = "Sirius Non Production Alerts"
+}
+
+data "pagerduty_service" "sirius_integrations" {
+  name = "Sirius Integrations"
+}
+
+resource "pagerduty_service_integration" "cloudwatch_integrations" {
+  name    = data.pagerduty_vendor.cloudwatch.name
+  service = data.pagerduty_service.sirius_integrations.id
+  vendor  = data.pagerduty_vendor.cloudwatch.id
+}
+
+resource "pagerduty_service_integration" "cloudwatch_integration_non_production" {
+  name    = data.pagerduty_vendor.cloudwatch.name
+  service = data.pagerduty_service.sirius_non_prod.id
+  vendor  = data.pagerduty_vendor.cloudwatch.id
+}
+
 resource "aws_kms_key" "cloudwatch_sns" {
   description             = "KMS Key for Cloudwatch related SNS Encryption for Integration Slack Notifications"
   deletion_window_in_days = 10
@@ -39,22 +70,4 @@ data "aws_iam_policy_document" "cloudwatch_sns_kms" {
       ]
     }
   }
-}
-
-module "notify_slack" {
-  source = "github.com/terraform-aws-modules/terraform-aws-notify-slack.git?ref=v2.10.0"
-
-  sns_topic_name   = aws_sns_topic.rest_api.name
-  create_sns_topic = false
-
-  lambda_function_name = "notify-slack"
-
-  cloudwatch_log_group_retention_in_days = 14
-
-  slack_webhook_url = data.aws_secretsmanager_secret_version.slack_webhook_url.secret_string
-  slack_channel     = local.account.alerts_channel
-  slack_username    = "aws"
-  slack_emoji       = ":warning:"
-
-  tags = local.default_tags
 }
