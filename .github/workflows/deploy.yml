@@ -12,6 +12,8 @@ defaults:
 jobs:
   terraform_apply:
     runs-on: "ubuntu-latest"
+    env:
+      TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
     strategy:
       max-parallel: 1
       matrix:
