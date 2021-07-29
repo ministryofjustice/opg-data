@@ -14,36 +14,38 @@ defaults:
 
 jobs:
   validate_documents:
+    name: Validate Docs
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v2
       - name: Run markdownlint
-        uses: actionshub/markdownlint@master
+        uses: actionshub/markdownlint@main
   
   terraform_checks:
+    name: Validate ${{ matrix.environment }}
     runs-on: "ubuntu-latest"
     needs: validate_documents
     strategy:
       max-parallel: 1
       matrix:
         include:
-          - tf_workspace: "development"
+          - environment: "development"
 
-          - tf_workspace: "preproduction"
+          - environment: "preproduction"
 
-          - tf_workspace: "production"
+          - environment: "production"
     steps:
       - uses: actions/checkout@v2
       - uses: hashicorp/setup-terraform@v1
       - name: Configure AWS Credentials For Terraform
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_SIRIUS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_SIRIUS }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
           role-session-name: GitHubActionsTerraform
       - name: Setup Workspace
-        run: echo TF_WORKSPACE=${{ matrix.tf_workspace }} >> $GITHUB_ENV
+        run: echo TF_WORKSPACE=${{ matrix.environment }} >> $GITHUB_ENV
 
       - name: Terraform init
         working-directory: ./infrastructure/terraform
@@ -70,7 +72,11 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
     - uses: unfor19/install-aws-cli-action@v1
-
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Install requirements
       working-directory: ./infrastructure/code_artifact_setup
       run: |
@@ -116,7 +122,7 @@ jobs:
       run: |
         echo -e "[pypi]" >> ~/.pypirc
         echo -e "username = __token__" >> ~/.pypirc
-        echo -e "password = ${{ secrets.PYPI_PASSWORD }}" >> ~/.pypirc
+        echo -e "password = ${{ secrets.PYPI_TOKEN }}" >> ~/.pypirc
     
     - name: upload shared circleci
       working-directory: ./shared_code/circle
