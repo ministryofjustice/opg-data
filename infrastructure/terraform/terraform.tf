@@ -7,7 +7,20 @@ terraform {
     role_arn       = "arn:aws:iam::311462405659:role/integrations-ci"
     dynamodb_table = "remote_lock"
   }
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "3.52.0"
+    }
+    pagerduty = {
+      source  = "pagerduty/pagerduty"
+      version = "1.10.0"
+    }
+  }
+  required_version = ">= 1.0.0"
 }
+
 
 provider "aws" {
   region = "eu-west-1"

@@ -11,6 +11,7 @@ defaults:
 
 jobs:
   terraform_apply:
+    name: Validate ${{ matrix.tf_workspace }}
     runs-on: "ubuntu-latest"
     env:
       TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -27,7 +28,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 0.12.26
+          terraform_version: 1.0.0
       - name: Configure AWS Credentials For Terraform
         uses: aws-actions/configure-aws-credentials@v1
         with:
