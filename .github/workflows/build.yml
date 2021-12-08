@@ -63,6 +63,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
     - uses: unfor19/install-aws-cli-action@v1
     - name: Login to Docker Hub
       uses: docker/login-action@v1
@@ -101,27 +103,3 @@ jobs:
       working-directory: ./shared_code/sirius_service
       run: |
         python setup.py sdist bdist_wheel
-
-    - name: init .pypirc
-      run: |
-        echo -e "[pypi]" >> ~/.pypirc
-        echo -e "username = __token__" >> ~/.pypirc
-        echo -e "password = ${{ secrets.PYPI_TOKEN }}" >> ~/.pypirc
-
-    - name: upload shared circleci
-      working-directory: ./shared_code/circle
-      run: |
-        python -m twine upload dist/* --skip-existing
-
-    - name: upload shared pact
-      working-directory: ./shared_code/pact
-      run: |
-        python -m twine upload dist/* --skip-existing
-
-    - name: upload shared sirius service
-      working-directory: ./shared_code/sirius_service
-      run: |
-        python -m twine upload dist/* --skip-existing
-
-
-

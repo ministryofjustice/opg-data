@@ -153,10 +153,11 @@ class SiriusService:
 
     def check_sirius_available(self):
         healthcheck_url = f"{self.sirius_base_url}/api/health-check"
-        r = requests.get(url=healthcheck_url)
-
-        return True if r.status_code == 200 else False
-        # return True
+        try:
+            return True if requests.get(url=healthcheck_url).status_code == 200 else False
+        except Exception as e:
+            logger.error(f"Sirius Unavailable: {e}")
+            return False
 
     def check_cache_available(self):
         try:
