@@ -5,7 +5,7 @@ with open("sirius_service.md", "r") as fh:
 
 setuptools.setup(
     name="opg_sirius_service",
-    version="0.1.1",
+    version="2.0.0",
     author="OPG",
     author_email="opg-integrations@digital.justice.gov.uk",
     description="Sirius Service",
