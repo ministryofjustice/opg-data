@@ -16,6 +16,7 @@ class SiriusServiceTestConfig:
     REQUEST_CACHING = "enabled"
     REQUEST_CACHING_TTL = 48
     REQUEST_CACHE_NAME = "opg-data-lpa-local"
+    REQUEST_TIMEOUT = 10
     REDIS_URL = "redis://redis:6379"
 
     # specific to local testing

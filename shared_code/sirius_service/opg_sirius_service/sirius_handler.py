@@ -24,6 +24,7 @@ class SiriusService:
             self.sirius_base_url = config_params.SIRIUS_BASE_URL
             self.environment = config_params.ENVIRONMENT
             self.session_data = config_params.SESSION_DATA
+            self.request_timeout = config_params.REQUEST_TIMEOUT
             self.request_caching = (
                 config_params.REQUEST_CACHING if cache else "disabled"
             )
@@ -154,7 +155,7 @@ class SiriusService:
     def check_sirius_available(self):
         healthcheck_url = f"{self.sirius_base_url}/api/health-check"
         try:
-            return True if requests.get(url=healthcheck_url).status_code == 200 else False
+            return True if requests.get(url=healthcheck_url,timeout=self.request_timeout).status_code == 200 else False
         except Exception as e:
             logger.error(f"Sirius Unavailable: {e}")
             return False
@@ -212,7 +213,7 @@ class SiriusService:
 
                 return r.status_code, r.json()
             elif method == "GET":
-                r = requests.get(url=url, headers=headers)
+                r = requests.get(url=url, headers=headers, timeout=self.request_timeout)
 
                 return r.status_code, r.json()
             else:
