@@ -178,9 +178,10 @@ class SiriusService:
             logger.info(f"sirius_status_code: {sirius_status_code}")
             logger.info(f"cache_enables: {cache_enabled}")
             logger.info(f"method: {method}")
-            if cache_enabled and method == "GET" and sirius_status_code == 200:
-                logger.info(f"Putting data in cache with key: {key}")
-                self._put_sirius_data_in_cache(key=key, data=sirius_data)
+            if cache_enabled and method == "GET":
+                if sirius_status_code == 200 or sirius_status_code == 410:
+                    logger.info(f"Putting data in cache with key: {key}")
+                    self._put_sirius_data_in_cache(key=key, data=sirius_data)
 
             return sirius_status_code, sirius_data
         else:
