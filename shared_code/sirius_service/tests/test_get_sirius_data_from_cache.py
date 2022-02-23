@@ -38,6 +38,7 @@ def test_get_sirius_data_from_cache_200(monkeypatch, test_key_name, test_key, te
 
     test_cache.flushall()
 
+@settings(max_examples=max_examples)
 def test_get_sirius_data_from_cache_410(monkeypatch, test_key_name, test_key, test_data):
 
     test_sirius_service.request_caching_name = test_key_name
