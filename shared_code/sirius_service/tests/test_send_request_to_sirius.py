@@ -49,9 +49,11 @@ def mock_get_data_from_sirius_failed(monkeypatch):
     "method, cache_enabled, expected_status_code, cache_expected",
     [
         ("GET", "enabled", 200, True),
+        ("GET", "enabled", 410, True),
         ("POST", "enabled", 200, False),
         ("PUT", "enabled", 200, False),
         ("GET", "disabled", 200, False),
+        ("GET", "disabled", 410, True),
         ("POST", "disabled", 200, False),
         ("PUT", "disabled", 200, False),
         ("GET", "banana", 200, False),
@@ -136,6 +138,7 @@ def test_send_request_to_sirius_request_fails(
     "method, cache_enabled, expected_status_code, cache_expected",
     [
         ("GET", "enabled", 200, True),
+        ("GET", "enabled", 410, True),
         ("POST", "enabled", 500, False),
         ("PUT", "enabled", 500, False),
         ("GET", "disabled", 500, False),
@@ -153,8 +156,9 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_in_cache(
     expected_status_code,
     cache_expected,
 ):
+    cache_key = f"{full_key}-{expected_status_code}"
 
-    cache.set(name=f"{full_key}", value=sirius_test_data, ex=ttl * 60 * 60)
+    cache.set(name=f"{cache_key}", value=sirius_test_data, ex=ttl * 60 * 60)
     print(f"cache.scan(): {cache.scan()}")
 
     test_sirius_service.request_caching = cache_enabled
@@ -165,7 +169,6 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_in_cache(
 
     assert result_status_code == expected_status_code
 
-    cache_key = f"{full_key}-{expected_status_code}"
     if cache_expected:
         print(f"json.loads(cache.get(cache_key)): {json.loads(cache.get(cache_key))}")
 

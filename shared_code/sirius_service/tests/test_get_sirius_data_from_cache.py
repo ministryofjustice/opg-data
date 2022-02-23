@@ -21,26 +21,36 @@ from .default_config import SiriusServiceTestConfig
     ),
 )
 @settings(max_examples=max_examples)
-@pytest.mark.parametrize(
-    "http_status",
-    [
-        (200),
-        (410)
-    ],
-)
-def test_get_sirius_data_from_cache(monkeypatch, test_key_name, test_key, test_data, http_status):
+def test_get_sirius_data_from_cache_200(monkeypatch, test_key_name, test_key, test_data):
 
     test_sirius_service.request_caching_name = test_key_name
     test_cache = test_sirius_service.cache
 
-    full_key = f"{test_key_name}-{test_key}-{http_status}"
+    full_key = f"{test_key_name}-{test_key}-200"
     test_cache.set(name=full_key, value=json.dumps(test_data))
 
     status_code, result_data = test_sirius_service._get_sirius_data_from_cache(
         key=test_key
     )
 
-    assert status_code == {http_status}
+    assert status_code == 200
+    assert result_data == test_data
+
+    test_cache.flushall()
+
+def test_get_sirius_data_from_cache_410(monkeypatch, test_key_name, test_key, test_data):
+
+    test_sirius_service.request_caching_name = test_key_name
+    test_cache = test_sirius_service.cache
+
+    full_key = f"{test_key_name}-{test_key}-410"
+    test_cache.set(name=full_key, value=json.dumps(test_data))
+
+    status_code, result_data = test_sirius_service._get_sirius_data_from_cache(
+        key=test_key
+    )
+
+    assert status_code == 410
     assert result_data == test_data
 
     test_cache.flushall()
