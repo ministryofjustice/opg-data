@@ -30,10 +30,10 @@ def test_put_sirius_data_in_cache(test_key_name, test_key, test_data, test_ttl):
     test_sirius_service.request_caching_ttl = test_ttl
 
     test_sirius_service._put_sirius_data_in_cache(
-        key=test_key, data=json.dumps(test_data)
+        key=test_key, data=json.dumps(test_data), status=200
     )
 
-    full_key = f"{test_key_name}-{test_key}"
+    full_key = f"{test_key_name}-{test_key}-200"
 
     assert json.loads(json.loads(test_cache.get(full_key))) == test_data
     assert test_cache.ttl(full_key) == test_ttl * 60 * 60
@@ -56,7 +56,7 @@ def test_put_sirius_data_in_cache_broken(caplog):
     )
 
     test_sirius_service._put_sirius_data_in_cache(
-        key=test_key, data=json.dumps(test_data)
+        key=test_key, data=json.dumps(test_data), status="fail"
     )
 
     with caplog.at_level("ERROR"):

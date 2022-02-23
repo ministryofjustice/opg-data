@@ -37,6 +37,13 @@ def mock_get_data_from_sirius_success(monkeypatch):
         lambda x, y, z, p: (200, sirius_test_data),
     )
 
+@pytest.fixture()
+def mock_get_data_from_sirius_deleted(monkeypatch):
+    monkeypatch.setattr(
+        test_sirius_service,
+        "_get_data_from_sirius",
+        lambda x, y, z, p: (410, sirius_test_data),
+    )
 
 @pytest.fixture()
 def mock_get_data_from_sirius_failed(monkeypatch):
@@ -58,7 +65,7 @@ def mock_get_data_from_sirius_failed(monkeypatch):
         ("GET", None, 200, False),
     ],
 )
-def test_send_request_to_sirius(
+def test_send_request_to_sirius_success(
     monkeypatch,
     caplog,
     mock_sirius_available,
@@ -76,17 +83,59 @@ def test_send_request_to_sirius(
 
     assert result_status_code == expected_status_code
 
+    cache_key = f"{full_key}-{expected_status_code}"
     if cache_expected:
-        print(f"full_key: {full_key}")
-        print(f"cache.get(full_key): {cache.get(full_key)}")
+        print(f"full_key: {cache_key}")
+        print(f"cache.get(full_key): {cache.get(cache_key)}")
         # print(f"json.loads(cache.get(full_key)): {json.loads(cache.get(full_key))}")
         print(f"cache.scan(): {cache.scan()}")
 
-        assert json.loads(cache.get(full_key)) == sirius_test_data
-        assert cache.ttl(full_key) == ttl * 60 * 60
+        assert json.loads(cache.get(cache_key)) == sirius_test_data
+        assert cache.ttl(cache_key) == ttl * 60 * 60
 
     else:
-        assert cache.exists(full_key) == 0
+        assert cache.exists(cache_key) == 0
+
+    cache.flushall()
+
+
+@pytest.mark.parametrize(
+    "method, cache_enabled, expected_status_code, cache_expected",
+    [
+        ("GET", "enabled", 410, True),
+        ("GET", "disabled", 410, False)
+    ],
+)
+def test_send_request_to_sirius_deleted(
+    monkeypatch,
+    caplog,
+    mock_sirius_available,
+    mock_get_data_from_sirius_deleted,
+    method,
+    cache_enabled,
+    expected_status_code,
+    cache_expected,
+):
+    test_sirius_service.request_caching = cache_enabled
+
+    result_status_code, result_data = test_sirius_service.send_request_to_sirius(
+        key, url, method, content_type=None, data=None
+    )
+
+    assert result_status_code == expected_status_code
+
+    cache_key = f"{full_key}-{expected_status_code}"
+    if cache_expected:
+        print(f"full_key: {cache_key}")
+        print(f"cache.get(full_key): {cache.get(cache_key)}")
+        # print(f"json.loads(cache.get(full_key)): {json.loads(cache.get(full_key))}")
+        print(f"cache.scan(): {cache.scan()}")
+
+        assert json.loads(cache.get(cache_key)) == sirius_test_data
+        assert cache.ttl(cache_key) == ttl * 60 * 60
+
+    else:
+        assert cache.exists(cache_key) == 0
 
     cache.flushall()
 
@@ -119,13 +168,15 @@ def test_send_request_to_sirius_request_fails(
     )
 
     assert result_status_code == expected_status_code
+
+    cache_key = f"{full_key}-{expected_status_code}"
     if cache_expected:
 
-        assert json.loads(cache.get(full_key)) == json.loads(sirius_test_data)
-        assert cache.ttl(full_key) == ttl * 60 * 60
+        assert json.loads(cache.get(cache_key)) == json.loads(sirius_test_data)
+        assert cache.ttl(cache_key) == ttl * 60 * 60
 
     else:
-        assert cache.exists(full_key) == 0
+        assert cache.exists(cache_key) == 0
     cache.flushall()
 
 
@@ -133,6 +184,7 @@ def test_send_request_to_sirius_request_fails(
     "method, cache_enabled, expected_status_code, cache_expected",
     [
         ("GET", "enabled", 200, True),
+        ("GET", "enabled", 410, True),
         ("POST", "enabled", 500, False),
         ("PUT", "enabled", 500, False),
         ("GET", "disabled", 500, False),
@@ -150,8 +202,9 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_in_cache(
     expected_status_code,
     cache_expected,
 ):
+    cache_key = f"{full_key}-{expected_status_code}"
 
-    cache.set(name=f"{full_key}", value=sirius_test_data, ex=ttl * 60 * 60)
+    cache.set(name=f"{cache_key}", value=sirius_test_data, ex=ttl * 60 * 60)
     print(f"cache.scan(): {cache.scan()}")
 
     test_sirius_service.request_caching = cache_enabled
@@ -161,11 +214,12 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_in_cache(
     )
 
     assert result_status_code == expected_status_code
-    if cache_expected:
-        print(f"json.loads(cache.get(full_key)): {json.loads(cache.get(full_key))}")
 
-        assert json.loads(cache.get(full_key)) == json.loads(sirius_test_data)
-        assert cache.ttl(full_key) == ttl * 60 * 60
+    if cache_expected:
+        print(f"json.loads(cache.get(cache_key)): {json.loads(cache.get(cache_key))}")
+
+        assert json.loads(cache.get(cache_key)) == json.loads(sirius_test_data)
+        assert cache.ttl(cache_key) == ttl * 60 * 60
 
     cache.flushall()
 
@@ -198,12 +252,14 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_not_in_cache(
     )
 
     assert result_status_code == expected_status_code
+
+    cache_key = f"{full_key}-{expected_status_code}"
     if cache_expected:
 
-        assert json.loads(cache.get(full_key)) == sirius_test_data
-        assert cache.ttl(full_key) == ttl * 60 * 60
+        assert json.loads(cache.get(cache_key)) == sirius_test_data
+        assert cache.ttl(cache_key) == ttl * 60 * 60
 
     else:
-        assert cache.exists(full_key) == 0
+        assert cache.exists(cache_key) == 0
 
     cache.flushall()

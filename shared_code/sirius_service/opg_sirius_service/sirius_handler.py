@@ -178,9 +178,10 @@ class SiriusService:
             logger.info(f"sirius_status_code: {sirius_status_code}")
             logger.info(f"cache_enables: {cache_enabled}")
             logger.info(f"method: {method}")
-            if cache_enabled and method == "GET" and sirius_status_code == 200:
-                logger.info(f"Putting data in cache with key: {key}")
-                self._put_sirius_data_in_cache(key=key, data=sirius_data)
+            if cache_enabled and method == "GET":
+                if sirius_status_code == 200 or sirius_status_code == 410:
+                    logger.info(f"Putting data in cache with key: {key}")
+                    self._put_sirius_data_in_cache(key=key, data=sirius_data, status=sirius_status_code)
 
             return sirius_status_code, sirius_data
         else:
@@ -227,9 +228,10 @@ class SiriusService:
                 error_message=f"Unable to send request to Sirius", error_details=e
             )
 
-    def _put_sirius_data_in_cache(self, key, data):
+    def _put_sirius_data_in_cache(self, key, data, status):
         logger.info(f"_put_sirius_data_in_cache")
         cache_name = self.request_caching_name
+        cache_ref = f"{cache_name}-{key}"
 
         cache_ttl_in_seconds = self.request_caching_ttl * 60 * 60
 
@@ -237,27 +239,34 @@ class SiriusService:
 
         try:
             self.cache.set(
-                name=f"{cache_name}-{key}", value=data, ex=cache_ttl_in_seconds
+                name=f"{cache_ref}-{status}", value=data, ex=cache_ttl_in_seconds
             )
-            logger.info(f"setting redis: {cache_name}-{key}")
+            logger.info(f"setting redis: {cache_ref}-{status}")
         except Exception as e:
-            logger.error(f"Unable to set cache: {cache_name}-{key}, error {e}")
+            logger.error(f"Unable to set cache: {cache_ref}-{status}, error {e}")
 
     def _get_sirius_data_from_cache(self, key):
 
         cache_name = self.request_caching_name
+        cache_ref = f"{cache_name}-{key}"
 
         try:
-            logger.info(f"getting redis: {cache_name}-{key}")
-            if self.cache.exists(f"{cache_name}-{key}"):
+            if self.cache.exists(f"{cache_ref}-200"):
+                logger.info(f"found redis cache: {cache_ref}-200")
                 status_code = 200
-                result = self.cache.get(f"{cache_name}-{key}")
+                result = self.cache.get(f"{cache_ref}-200")
+                result = json.loads(result)
+            elif self.cache.exists(f"{cache_ref}-410"):
+                logger.info(f"found redis cache: {cache_ref}-410")
+                status_code = 410
+                result = self.cache.get(f"{cache_ref}-410")
                 result = json.loads(result)
             else:
+                logger.info(f"no-cache exists for: {cache_ref}-[200, 410]")
                 status_code = 500
                 result = None
         except Exception as e:
-            logger.error(f"Unable to get from cache: {cache_name}-{key}, error {e}")
+            logger.error(f"Unable to get from cache: {cache_ref}, error {e}")
             status_code = 500
             result = None
 
