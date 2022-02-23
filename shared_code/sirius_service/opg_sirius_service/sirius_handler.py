@@ -251,7 +251,7 @@ class SiriusService:
         cache_ref = f"{cache_name}-{key}"
 
         try:
-            if self.cache.exists(f"-200"):
+            if self.cache.exists(f"{cache_ref}-200"):
                 logger.info(f"found redis cache: {cache_ref}-200")
                 status_code = 200
                 result = self.cache.get(f"{cache_ref}-200")
