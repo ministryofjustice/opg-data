@@ -36,11 +36,16 @@ resource "pagerduty_service_integration" "cloudwatch_integration_non_production"
 }
 
 resource "aws_kms_key" "cloudwatch_sns" {
-  description             = "KMS Key for Cloudwatch related SNS Encryption for Integration Slack Notifications"
+  description             = "KMS Key for Cloudwatch related SNS Encryption for Integration Notifications"
   deletion_window_in_days = 10
   policy                  = data.aws_iam_policy_document.cloudwatch_sns_kms.json
   enable_key_rotation     = true
   tags                    = local.default_tags
+}
+
+resource "aws_kms_alias" "cloudwatch_logs_alias" {
+  name          = "alias/integrations-sns-${terraform.workspace}"
+  target_key_id = aws_kms_key.cloudwatch_sns.key_id
 }
 
 data "aws_iam_policy_document" "cloudwatch_sns_kms" {
