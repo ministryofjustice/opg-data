@@ -7,7 +7,6 @@ import re
 import os
 import urllib.parse
 from boto3 import Session
-from boto3 import exceptions
 
 
 class PactDeploymentCheck:
@@ -442,11 +441,10 @@ class PactDeploymentCheck:
         )
 
         client = session.client(service_name="secretsmanager", region_name=region_name)
-
         try:
             get_secret_value_response = client.get_secret_value(SecretId=secret_name)
             secret = get_secret_value_response["SecretString"]
-        except exceptions.ClientError as e:
+        except Exception as e:
             print("Unable to get secret from Secrets Manager")
             raise e
 
