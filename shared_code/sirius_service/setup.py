@@ -22,6 +22,6 @@ setuptools.setup(
     install_requires = [
         "boto3",
         "requests-aws4auth==1.0.1",
-        "pyjwt==1.7.1",
+        "pyjwt==2.4.0",
     ]
 )
