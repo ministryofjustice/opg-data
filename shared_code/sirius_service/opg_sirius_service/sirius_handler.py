@@ -129,7 +129,7 @@ class SiriusService:
 
         return {
             "Content-Type": content_type,
-            "Authorization": "Bearer " + encoded_jwt.decode("UTF8"),
+            "Authorization": "Bearer " + encoded_jwt,
         }
 
     def _handle_sirius_error(
