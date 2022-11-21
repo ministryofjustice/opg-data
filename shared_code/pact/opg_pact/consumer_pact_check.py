@@ -4,7 +4,6 @@ import re
 import os
 import argparse
 from boto3 import Session
-from boto3 import exceptions
 
 
 class PactDeploymentCheck:
@@ -111,7 +110,7 @@ class PactDeploymentCheck:
                 SecretId=self.broker_secret_name
             )
             secret = get_secret_value_response["SecretString"]
-        except exceptions.ClientError as e:
+        except Exception as e:
             print("Unable to get secret from Secrets Manager")
             raise e
 
