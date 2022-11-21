@@ -105,7 +105,7 @@ class PactTagPacticipant:
                 SecretId=self.broker_secret_name
             )
             secret = get_secret_value_response["SecretString"]
-        except exceptions.ClientError as e:
+        except Exception as e:
             print("Unable to get secret from Secrets Manager")
             raise e
 
