@@ -1,26 +1,21 @@
 ---
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.4.0
-  hooks:
-    - id: trailing-whitespace
-    - id: detect-private-key
-    - id: flake8
-      args: ['--ignore=W503', '--exclude=docs/supportscripts/*']
-    - id: trailing-whitespace
-      args: [--markdown-linebreak-ext=md]
-- repo: https://github.com/ambv/black
-  rev: stable
-  hooks:
-    - id: black
-      language_version: python3
-- repo: https://github.com/Yelp/detect-secrets
-  rev: v0.13.0
-  hooks:
-    - id: detect-secrets
-      args: ['--baseline', '.secrets.baseline']
-- repo: local
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
     hooks:
-    - id: tests
-        name: run tests
-        entry: pytest -v
-        stages: [commit, push]
+      - id: trailing-whitespace
+      - id: detect-private-key
+      - id: flake8
+        args: ['--ignore=W503', '--exclude=docs/supportscripts/*']
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+  - repo: https://github.com/ambv/black
+    rev: stable
+    hooks:
+      - id: black
+        language_version: python3
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v0.13.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']

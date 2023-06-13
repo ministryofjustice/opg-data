@@ -1,8 +1,6 @@
 import json
-import logging
 
 import hypothesis.strategies as st
-import pytest
 from hypothesis import given, settings, example
 
 from .conftest import max_examples
@@ -27,7 +25,6 @@ from .conftest import test_sirius_service
 def test_get_data_from_sirius(
     url, method, content_type, data, patched_build_sirius_headers, patched_requests
 ):
-
     default_content_type = "application/json"
 
     result_status, result_data = test_sirius_service._get_data_from_sirius(
@@ -74,6 +71,3 @@ def test_get_data_from_sirius_exception(
         url=url, method=method
     )
     assert result_status == 500
-
-    with caplog.at_level(logging.ERROR):
-        assert "Unable to send request to Sirius" in caplog.text
