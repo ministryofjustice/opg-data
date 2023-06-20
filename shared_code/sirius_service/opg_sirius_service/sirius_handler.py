@@ -76,9 +76,7 @@ class SiriusService:
         """
 
         environment = self.environment
-        print(self.environment)
         secret_name = f"{environment}/jwt-key"
-        print(secret_name)
         region_name = "eu-west-1"
 
         if environment == "local":  # pragma: no cover
