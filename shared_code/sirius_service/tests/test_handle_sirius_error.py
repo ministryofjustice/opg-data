@@ -1,7 +1,4 @@
-import logging
-
 import hypothesis.strategies as st
-import pytest
 from hypothesis import given, settings
 
 
@@ -20,7 +17,6 @@ from .conftest import (
 def test_handle_sirius_error_with_hypothesis(
     caplog, test_error_code, test_error_message, test_error_details
 ):
-
     default_code = 500
     default_message = "Unknown error talking to Sirius"
     default_details = None
@@ -43,6 +39,3 @@ def test_handle_sirius_error_with_hypothesis(
 
     assert code == expected_code
     assert message == expected_message
-
-    with caplog.at_level(logging.ERROR):
-        assert expected_message in caplog.text

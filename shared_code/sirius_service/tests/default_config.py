@@ -1,6 +1,3 @@
-import os
-
-
 class SiriusServiceTestConfig:
     # override prod values
     DEBUG = True
@@ -8,7 +5,7 @@ class SiriusServiceTestConfig:
     LOGGER_LEVEL = "DEBUG"
     API_VERSION = "v1"
     API_NAME = "opg-data-lpa"
-    ENVIRONMENT = os.environ.get("ENVIRONMENT")
+    ENVIRONMENT = "local"
 
     SIRIUS_BASE_URL = "http://not-really-sirius.com"
     SESSION_DATA = "publicapi@opgtest.com"

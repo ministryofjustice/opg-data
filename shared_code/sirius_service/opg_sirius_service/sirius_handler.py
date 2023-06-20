@@ -8,9 +8,6 @@ import localstack_client.session
 import requests
 from botocore.exceptions import ClientError
 
-# from ..api.helpers import custom_logger
-
-# logger = custom_logger("opg_sirius_service")
 import logging
 
 logger = logging
@@ -18,9 +15,9 @@ logger = logging
 
 class SiriusService:
     def __init__(self, config_params, cache):
-
         try:
             self.cache = cache
+            self.use_cache = False
             self.sirius_base_url = config_params.SIRIUS_BASE_URL
             self.environment = config_params.ENVIRONMENT
             self.session_data = config_params.SESSION_DATA
@@ -39,7 +36,7 @@ class SiriusService:
                 else 48
             )
         except Exception as e:
-            logger.info(f"Error loading config e: {e}")
+            raise Exception(f"Error loading config e: {e}")
 
     def build_sirius_url(self, endpoint, url_params=None):
         """
@@ -79,11 +76,13 @@ class SiriusService:
         """
 
         environment = self.environment
+        print(self.environment)
         secret_name = f"{environment}/jwt-key"
+        print(secret_name)
         region_name = "eu-west-1"
 
         if environment == "local":  # pragma: no cover
-            logger.info("Using local AWS Secrets Manager")  # pragma: no cover
+            logger.debug("Using local AWS Secrets Manager")  # pragma: no cover
             current_session = localstack_client.session.Session()  # pragma: no cover
 
         else:
@@ -97,8 +96,7 @@ class SiriusService:
             get_secret_value_response = client.get_secret_value(SecretId=secret_name)
             secret = get_secret_value_response["SecretString"]
         except ClientError as e:
-            logger.info(f"Unable to get secret from Secrets Manager {e}")
-            raise e
+            raise Exception(f"Unable to get secret from Secrets Manager: {e}")
 
         return secret
 
@@ -137,7 +135,7 @@ class SiriusService:
     ):
         error_code = error_code if error_code else 500
         error_message = (
-            error_message if error_message else "Unknown error talking to " "Sirius"
+            error_message if error_message else "Unknown error talking to Sirius"
         )
 
         try:
@@ -149,13 +147,19 @@ class SiriusService:
             )
 
         message = f"{error_message}, details: {str(error_details)}"
-        logger.error(message)
         return error_code, message
 
     def check_sirius_available(self):
         healthcheck_url = f"{self.sirius_base_url}/api/health-check"
         try:
-            return True if requests.get(url=healthcheck_url,timeout=self.request_timeout).status_code == 200 else False
+            return (
+                True
+                if requests.get(
+                    url=healthcheck_url, timeout=self.request_timeout
+                ).status_code
+                == 200
+                else False
+            )
         except Exception as e:
             logger.error(f"Sirius Unavailable: {e}")
             return False
@@ -168,38 +172,41 @@ class SiriusService:
             return False
 
     def send_request_to_sirius(self, key, url, method, content_type=None, data=None):
-
         cache_enabled = True if self.request_caching == "enabled" else False
-
+        self.use_cache = False
         if self.check_sirius_available():
             sirius_status_code, sirius_data = self._get_data_from_sirius(
                 url, method, content_type, data
             )
-            logger.info(f"sirius_status_code: {sirius_status_code}")
-            logger.info(f"cache_enables: {cache_enabled}")
-            logger.info(f"method: {method}")
+            logger.debug(f"sirius_status_code: {sirius_status_code}")
+            logger.debug(f"cache_enabled: {cache_enabled}")
+            logger.debug(f"method: {method}")
             if cache_enabled and method == "GET":
                 if sirius_status_code == 200 or sirius_status_code == 410:
-                    logger.info(f"Putting data in cache with key: {key}")
-                    self._put_sirius_data_in_cache(key=key, data=sirius_data, status=sirius_status_code)
+                    logger.debug(f"Putting data in cache with key: {key}")
+                    self._put_sirius_data_in_cache(
+                        key=key, data=sirius_data, status=sirius_status_code
+                    )
 
             return sirius_status_code, sirius_data
         else:
             if cache_enabled and method == "GET":
-                logger.info(f"Getting data from cache with key: {key}")
+                self.use_cache = True
+                logger.debug(f"Getting data from cache with key: {key}")
                 sirius_status_code, sirius_data = self._get_sirius_data_from_cache(
                     key=key
                 )
 
                 return sirius_status_code, sirius_data
             else:
-                return self._handle_sirius_error(
-                    error_message=f"Unable to send request to Sirius",
-                    error_details=f"Sirius not available",
+                sirius_status_code, sirius_data = self._handle_sirius_error(
+                    error_message="Unable to send request to Sirius",
+                    error_details="Sirius not available - cache not enabled or incorrect method for cache",
                 )
+                return sirius_status_code, sirius_data
 
     def _get_data_from_sirius(self, url, method, content_type=None, data=None):
-        logger.info("_get_data_from_sirius")
+        logger.debug("_get_data_from_sirius")
         headers = self._build_sirius_headers(content_type)
 
         try:
@@ -215,21 +222,20 @@ class SiriusService:
                 return r.status_code, r.json()
             elif method == "GET":
                 r = requests.get(url=url, headers=headers, timeout=self.request_timeout)
-
                 return r.status_code, r.json()
             else:
                 return self._handle_sirius_error(
-                    error_message=f"Unable to send request to Sirius",
+                    error_message="Unable to send request to Sirius",
                     error_details=f"Method {method} not allowed on Sirius route",
                 )
 
         except Exception as e:
             return self._handle_sirius_error(
-                error_message=f"Unable to send request to Sirius", error_details=e
+                error_message="Unable to send request to Sirius", error_details=e
             )
 
     def _put_sirius_data_in_cache(self, key, data, status):
-        logger.info(f"_put_sirius_data_in_cache")
+        logger.debug("_put_sirius_data_in_cache")
         cache_name = self.request_caching_name
         cache_ref = f"{cache_name}-{key}"
 
@@ -241,28 +247,27 @@ class SiriusService:
             self.cache.set(
                 name=f"{cache_ref}-{status}", value=data, ex=cache_ttl_in_seconds
             )
-            logger.info(f"setting redis: {cache_ref}-{status}")
+            logger.debug(f"setting redis: {cache_ref}-{status}")
         except Exception as e:
             logger.error(f"Unable to set cache: {cache_ref}-{status}, error {e}")
 
     def _get_sirius_data_from_cache(self, key):
-
         cache_name = self.request_caching_name
         cache_ref = f"{cache_name}-{key}"
 
         try:
             if self.cache.exists(f"{cache_ref}-200"):
-                logger.info(f"found redis cache: {cache_ref}-200")
+                logger.debug(f"found redis cache: {cache_ref}-200")
                 status_code = 200
                 result = self.cache.get(f"{cache_ref}-200")
                 result = json.loads(result)
             elif self.cache.exists(f"{cache_ref}-410"):
-                logger.info(f"found redis cache: {cache_ref}-410")
+                logger.debug(f"found redis cache: {cache_ref}-410")
                 status_code = 410
                 result = self.cache.get(f"{cache_ref}-410")
                 result = json.loads(result)
             else:
-                logger.info(f"no-cache exists for: {cache_ref}-[200, 410]")
+                logger.debug(f"no-cache exists for: {cache_ref}-[200, 410]")
                 status_code = 500
                 result = None
         except Exception as e:
