@@ -26,9 +26,16 @@ jobs:
           - environment: "production"
     steps:
       - uses: actions/checkout@v2
-      - uses: hashicorp/setup-terraform@v1
+      - name: "Set terraform version [${{ matrix.environment }}]"
+        id: set-terraform-version
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
         with:
-          terraform_version: 1.0.0
+          terraform_directory: ./infrastructure/terraform
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
+
       - name: Configure AWS Credentials For Terraform
         uses: aws-actions/configure-aws-credentials@v1
         with:
