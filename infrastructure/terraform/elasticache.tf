@@ -3,7 +3,7 @@ data "aws_subnet_ids" "private" {
 
   filter {
     name   = "tag:Name"
-    values = ["private-*"]
+    values = ["application-*"]
   }
 }
 
