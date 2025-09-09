@@ -9,17 +9,6 @@ terraform {
     }
     dynamodb_table = "remote_lock"
   }
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "4.57.0"
-    }
-    pagerduty = {
-      source = "pagerduty/pagerduty"
-    }
-  }
-  required_version = ">= 1.0.0"
 }
 
 
