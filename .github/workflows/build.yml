@@ -83,18 +83,3 @@ jobs:
     - name: Install packaging applications
       run: |
         python -m pip install --user --upgrade setuptools wheel twine
-
-    # - name: package shared circleci
-    #   working-directory: ./shared_code/circle
-    #   run: |
-    #     python setup.py sdist bdist_wheel
-
-    # - name: package shared pact
-    #   working-directory: ./shared_code/pact
-    #   run: |
-    #     python setup.py sdist bdist_wheel
-
-    # - name: package shared sirius service
-    #   working-directory: ./shared_code/sirius_service
-    #   run: |
-    #     python setup.py sdist bdist_wheel
