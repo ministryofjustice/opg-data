@@ -16,7 +16,6 @@ jobs:
     env:
       TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
     strategy:
-      max-parallel: 1
       fail-fast: false
       matrix:
         include:
