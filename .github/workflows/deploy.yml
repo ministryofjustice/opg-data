@@ -109,12 +109,12 @@ jobs:
     #   run: |
     #     python -m twine upload dist/* --skip-existing
 
-    - name: upload shared pact
-      working-directory: ./shared_code/pact
-      run: |
-        python -m twine upload dist/* --skip-existing
+    # - name: upload shared pact
+    #   working-directory: ./shared_code/pact
+    #   run: |
+    #     python -m twine upload dist/* --skip-existing
 
-    - name: upload shared sirius service
-      working-directory: ./shared_code/sirius_service
-      run: |
-        python -m twine upload dist/* --skip-existing
+    # - name: upload shared sirius service
+    #   working-directory: ./shared_code/sirius_service
+    #   run: |
+    #     python -m twine upload dist/* --skip-existing
