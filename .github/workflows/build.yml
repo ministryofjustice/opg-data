@@ -79,10 +79,10 @@ jobs:
     - name: Run Pact Tests
       working-directory: ./shared_code/pact/opg_pact
       run: |
-        docker-compose up -d
+        docker compose up -d
         sleep 3
-        docker-compose run python_tests python -m pytest
-        docker-compose down
+        docker compose run python_tests python -m pytest
+        docker compose down
 
     - name: Run Sirius service tests
       run: |
