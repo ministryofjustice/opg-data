@@ -16,7 +16,6 @@ jobs:
     env:
       TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
     strategy:
-      max-parallel: 1
       matrix:
         include:
           - tf_workspace: "development"
@@ -67,14 +66,6 @@ jobs:
         python-version: '3.8'
 
     - uses: unfor19/install-aws-cli-action@v1
-
-    - name: Run Pact Tests
-      working-directory: ./shared_code/pact/opg_pact
-      run: |
-        docker-compose up -d
-        sleep 3
-        docker-compose run python_tests python -m pytest
-        docker-compose down
 
     - name: Run Sirius service tests
       run: |

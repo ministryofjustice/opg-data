@@ -1,23 +1,14 @@
 terraform {
   backend "s3" {
-    bucket         = "opg.terraform.state"
-    key            = "opg-data-deputy-reporting-shared/terraform.tfstate"
-    encrypt        = true
-    region         = "eu-west-1"
-    role_arn       = "arn:aws:iam::311462405659:role/integrations-ci"
+    bucket  = "opg.terraform.state"
+    key     = "opg-data-deputy-reporting-shared/terraform.tfstate"
+    encrypt = true
+    region  = "eu-west-1"
+    assume_role = {
+      role_arn = "arn:aws:iam::311462405659:role/integrations-ci"
+    }
     dynamodb_table = "remote_lock"
   }
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "4.57.0"
-    }
-    pagerduty = {
-      source = "pagerduty/pagerduty"
-    }
-  }
-  required_version = ">= 1.0.0"
 }
 
 
