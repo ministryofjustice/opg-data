@@ -1,5 +1,0 @@
-pytest
-flake8
-flake8-quotes
-Flask
-pytest-env
