@@ -25,7 +25,7 @@ jobs:
 
           - environment: "production"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
       - name: "Set terraform version [${{ matrix.environment }}]"
         id: set-terraform-version
         uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
