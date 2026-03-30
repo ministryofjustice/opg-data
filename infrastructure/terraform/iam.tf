@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "serve_ci_sirius" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::631181914621:user/serve-opg-ci"]
+      identifiers = ["arn:aws:iam::631181914621:role/serve-opg-ci"]
     }
 
     actions = ["sts:AssumeRole"]
