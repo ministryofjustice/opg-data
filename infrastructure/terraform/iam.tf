@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "serve_ci_sirius" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::631181914621:role/oidc-serve-*"]
+      identifiers = [for env in keys(local.accounts) : "arn:aws:iam::631181914621:role/oidc-serve-${env}"]
     }
 
     actions = ["sts:AssumeRole"]
