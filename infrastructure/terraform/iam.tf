@@ -14,16 +14,10 @@ data "aws_iam_policy_document" "serve_ci_sirius" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::631181914621:root"]
+      identifiers = ["arn:aws:iam::631181914621:role/oidc-serve-*"]
     }
 
     actions = ["sts:AssumeRole"]
-
-    condition {
-      test     = "ArnLike"
-      variable = "aws:PrincipalArn"
-      values   = ["arn:aws:iam::631181914621:role/serve-opg-ci"]
-    }
   }
 }
 #
