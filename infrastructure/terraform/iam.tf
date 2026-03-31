@@ -2,6 +2,22 @@ data "aws_kms_key" "sirius" {
   key_id = "alias/public_api_bucket_${local.account.serve_bucket_suffix}"
 }
 
+locals {
+  identity = var.identity_account_id
+
+  oidc_development_role_arn   = "arn:aws:iam::${local.identity}:role/oidc-serve-development"
+  oidc_preproduction_role_arn = "arn:aws:iam::${local.identity}:role/oidc-serve-preproduction"
+  oidc_production_role_arn    = "arn:aws:iam::${local.identity}:role/oidc-serve-production"
+
+  ci_config = {
+    trusted_oidc_role_arns = [
+      local.oidc_development_role_arn,
+      local.oidc_preproduction_role_arn,
+      local.oidc_production_role_arn,
+    ]
+  }
+}
+
 resource "aws_iam_role" "serve_integration" {
   name               = "serve-assume-role-ci-${local.environment}"
   assume_role_policy = data.aws_iam_policy_document.serve_ci_sirius.json
@@ -13,12 +29,8 @@ data "aws_iam_policy_document" "serve_ci_sirius" {
     effect = "Allow"
 
     principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::631181914621:role/oidc-serve-development",
-        "arn:aws:iam::631181914621:role/oidc-serve-preproduction",
-        "arn:aws:iam::631181914621:role/oidc-serve-production"
-      ]
+      type        = "AWS"
+      identifiers = local.ci_config.trusted_oidc_role_arns
     }
 
     actions = ["sts:AssumeRole"]
@@ -64,7 +76,7 @@ data "aws_iam_policy_document" "code_artifact_assume" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::631181914621:root"]
+      identifiers = local.ci_config.trusted_oidc_role_arns
     }
 
     actions = ["sts:AssumeRole"]

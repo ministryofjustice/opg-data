@@ -32,3 +32,8 @@ variable "accounts" {
     })
   )
 }
+
+variable "identity_account_id" {
+  description = "Account ID that owns the OIDC serve roles"
+  type        = string
+}
