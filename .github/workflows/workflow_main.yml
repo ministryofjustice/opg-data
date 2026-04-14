@@ -1,0 +1,62 @@
+name: Path to Live Workflow
+
+permissions:
+  id-token: write
+
+on:
+  push:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform_apply:
+    name: Plan & Apply ${{ matrix.environment }}
+    runs-on: "ubuntu-latest"
+    env:
+      TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
+      TF_VAR_default_role: ${{ matrix.default_role }}
+      TF_WORKSPACE: ${{ matrix.environment }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - environment: "development"
+            default_role: ${{ vars.DEVELOPMENT_ROLE }}
+          - environment: "preproduction"
+            default_role: ${{ vars.PREPRODUCTION_MAIN_ROLE }}
+          - environment: "production"
+            default_role: ${{ vars.PRODUCTION_MAIN_ROLE }}
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - name: "Set terraform version [${{ matrix.environment }}]"
+        id: set-terraform-version
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v.4.8.0
+        with:
+          terraform_directory: ./infrastructure/terraform
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
+
+      - name: Configure AWS Credentials For Terraform
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.OIDC_MAIN_ROLE }}
+          role-session-name: OPGDataGitHubAction
+
+      - name: Terraform init
+        working-directory: ./infrastructure/terraform
+        run: terraform init
+
+      - name: Plan ${{ matrix.environment }}
+        working-directory: ./infrastructure/terraform
+        run: terraform plan -lock-timeout=300s -input=false -parallelism=30 -out=${{ matrix.environment }}.plan
+
+      - name: Apply ${{ matrix.environment }}
+        working-directory: ./infrastructure/terraform
+        run: terraform apply -lock-timeout=300s -input=false -auto-approve -parallelism=30 ${{ matrix.environment }}.plan

@@ -1,4 +1,7 @@
-name: Build
+name: Pull Request Workflow
+
+permissions:
+  id-token: write
 
 on:
   pull_request:
@@ -11,24 +14,27 @@ defaults:
 
 jobs:
   terraform_checks:
-    name: Validate ${{ matrix.environment }}
+    name: Validate & Plan ${{ matrix.environment }}
     runs-on: "ubuntu-latest"
     env:
       TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
+      TF_VAR_default_role: ${{ matrix.default_role }}
+      TF_WORKSPACE: ${{ matrix.environment }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - environment: "development"
-
+            default_role: ${{ vars.DEVELOPMENT_ROLE }}
           - environment: "preproduction"
-
+            default_role: ${{ vars.PREPRODUCTION_PULL_REQUEST_ROLE }}
           - environment: "production"
+            default_role: ${{ vars.PRODUCTION_PULL_REQUEST_ROLE }}
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: "Set terraform version [${{ matrix.environment }}]"
         id: set-terraform-version
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v.4.8.0
         with:
           terraform_directory: ./infrastructure/terraform
 
@@ -39,27 +45,22 @@ jobs:
       - name: Configure AWS Credentials For Terraform
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-          role-session-name: GitHubActionsTerraform
-      - name: Setup Workspace
-        run: echo TF_WORKSPACE=${{ matrix.environment }} >> $GITHUB_ENV
+          role-to-assume: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+          role-session-name: OPGDataGitHubAction
 
       - name: Terraform init
         working-directory: ./infrastructure/terraform
-        run: |
-          terraform init
+        run: terraform init
+
       - name: Terraform formatting
         working-directory: ./infrastructure/terraform
-        run: |
-          terraform fmt -diff -check -recursive
+        run: terraform fmt -diff -check -recursive
+
       - name: Terraform validate
         working-directory: ./infrastructure/terraform
-        run: |
-          terraform validate
+        run: terraform validate
 
       - name: Terraform Plan
         working-directory: ./infrastructure/terraform
-        run: |
-          terraform plan -input=false
+        run: terraform plan -input=false
