@@ -18,6 +18,9 @@ provider "aws" {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
+  default_tags {
+    tags = local.default_tags
+  }
 }
 
 # Configure the PagerDuty provider

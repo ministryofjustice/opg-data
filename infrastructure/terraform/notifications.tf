@@ -1,7 +1,6 @@
 resource "aws_sns_topic" "rest_api" {
   name              = "rest-api"
   kms_master_key_id = aws_kms_key.cloudwatch_sns.key_id
-  tags              = local.default_tags
 }
 
 resource "aws_sns_topic_subscription" "cloudwatch_sns_subscription_integrations" {
@@ -40,7 +39,6 @@ resource "aws_kms_key" "cloudwatch_sns" {
   deletion_window_in_days = 10
   policy                  = data.aws_iam_policy_document.cloudwatch_sns_kms.json
   enable_key_rotation     = true
-  tags                    = local.default_tags
 }
 
 resource "aws_kms_alias" "cloudwatch_logs_alias" {
