@@ -3,22 +3,25 @@ locals {
   account     = contains(keys(var.accounts), local.environment) ? var.accounts[local.environment] : var.accounts.development
 
   default_tags = {
-    business-unit          = "OPG"
     application            = "Data"
+    business-unit          = "OPG"
     environment-name       = local.environment
-    owner                  = "OPG"
     infrastructure-support = "OPG WebOps: opgteam@digital.justice.gov.uk"
     is-production          = local.account.is_production
-    source-code            = "https://github.com/ministryofjustice/opg-data-deputy-reporting"
+    owner                  = "OPG"
+    service-area           = "Shared OPG"
+    source-code            = "https://github.com/ministryofjustice/opg-data"
   }
 }
 
 
 variable "default_role" {
   default = "opg-data-development-ci"
+  type    = string
 }
 
 variable "pagerduty_token" {
+  type = string
 }
 
 variable "accounts" {
